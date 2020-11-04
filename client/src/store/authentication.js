@@ -48,6 +48,9 @@ export const logout = () => async (dispatch, getState) => {
     const response = await fetch(`/api/session/logout`, requestOptions);
     if (response.ok) {
         dispatch(removeUser());
+    } else {
+        // change to actual dispatch of error
+        console.log("error")
     }
 }
 
