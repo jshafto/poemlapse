@@ -7,14 +7,16 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 
 import UserList from './components/UsersList';
 import LoginForm from './components/LoginForm';
-import NavBar from './components/NavBar'
-import { restoreCSRF } from './store/csrf'
-
+import NavBar from './components/NavBar';
+import Editor from './components/Editor';
+import { restoreCSRF } from './store/csrf';
+import { themeObj } from './theme'
 import { ProtectedRoute, AuthRoute } from './Routes';
 
 
+
 function App() {
-    const theme = createMuiTheme();
+    const theme = createMuiTheme(themeObj);
     const dispatch = useDispatch();
 
 

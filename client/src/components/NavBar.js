@@ -1,30 +1,26 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux';
+
+import { makeStyles } from '@material-ui/styles';
+import AppBar from '@material-ui/core/AppBar';
+import Button from '@material-ui/core/Button'
+import Toolbar from '@material-ui/core/Toolbar';
+
 import { logout } from '../store/authentication';
 
-import { makeStyles } from '@material-ui/styles'
 
 const useStyles = makeStyles(theme => ({
     bar: {
-        position: 'static',
-        display: 'flex',
-        width: '100%',
-        padding: 10,
         justifyContent: 'space-between',
     },
     button: {
-        padding: 10,
-        fontSize: '1rem',
-        borderRadius: 5,
-        '&:hover': {
-            backgroundColor: 'lightgray'
-        }
-    },
-    buttonContainer: {
+        fontSize: '1.2rem',
+        fontWeight: '600',
         marginRight: 5,
         marginLeft: 5,
     },
+
     others: {
         display: 'flex',
     }
@@ -40,34 +36,27 @@ const NavBar = () => {
     const handleLogout = () => dispatch(logout())
 
     return (
-        <nav className={classes.bar}>
+        <AppBar
+            color='transparent'
+            elevation='0'
+            position='static' >
+            <Toolbar className={classes.bar}>
+                <Button className={classes.button} component={NavLink} to="/">
+                    PoemLapse
+                </Button>
+                <div className={classes.others}>
+                    <Button component={NavLink} to='/users' className={classes.button}>Users</Button>
+                    {(loggedOut) ? (
 
-            <div className={classes.buttonContainer}>
-                <NavLink to="/">
-                    <button className={classes.button}>Home</button>
-                </NavLink>
-            </div>
-            <div className={classes.others}>
-                <div className={classes.buttonContainer}>
-                    <NavLink to="/users">
-                        <button className={classes.button}>Users</button>
-                    </NavLink>
+                        <Button component={NavLink} to="/login" className={classes.button}>Login</Button>
+                    ) : (
+                            <Button className={classes.button} onClick={handleLogout}>Logout</Button>
+                        )
+                    }
+
                 </div>
-                {(loggedOut) ? (
-                    <div className={classes.buttonContainer}>
-                        <NavLink to="/login">
-                            <button className={classes.button}>Login</button>
-                        </NavLink>
-                    </div>
-                ) : (
-                        <div className={classes.buttonContainer}>
-                            <button className={classes.button} onClick={handleLogout}>Logout</button>
-                        </div>
-                    )
-                }
-
-            </div>
-        </nav>
+            </Toolbar>
+        </AppBar>
     )
 }
 
