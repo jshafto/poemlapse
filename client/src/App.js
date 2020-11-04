@@ -7,7 +7,6 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 
 import UserList from './components/UsersList';
 import LoginForm from './components/LoginForm';
-import UserForm from './components/UserForm';
 import { logout } from './store/authentication';
 import { restoreCSRF } from './store/csrf'
 
@@ -22,33 +21,32 @@ function App() {
 
     useEffect(() => {
         dispatch(restoreCSRF());
-      }, []);
+    }, []);
 
 
 
-  return (
-    <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <BrowserRouter>
-            <nav>
-                <ul>
-                    <li><NavLink to="/" activeclass="active">Home</NavLink></li>
-                    <li><NavLink to="/login" activeclass="active">Login</NavLink></li>
-                    <li><a onClick={logout} href="#" activeclass="active">Logout</a></li>
-                    <li><NavLink to="/users" activeclass="active">Users</NavLink></li>
-                </ul>
-            </nav>
-            <Switch>
-                <ProtectedRoute path="/users" exact={true} component={UserList} currentUserId={currentUserId} />
-                <ProtectedRoute path="/users/:id/edit" component={UserForm} currentUserId={currentUserId} />
-                <AuthRoute path="/login" component={LoginForm} />
-                <Route path="/">
-                    <h1>My Home Page</h1>
-                </Route>
-            </Switch>
-        </BrowserRouter>
-    </ThemeProvider>
-  );
+    return (
+        <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <BrowserRouter>
+                <nav>
+                    <ul>
+                        <li><NavLink to="/" activeclass="active">Home</NavLink></li>
+                        <li><NavLink to="/login" activeclass="active">Login</NavLink></li>
+                        <li><a onClick={logout} href="#" activeclass="active">Logout</a></li>
+                        <li><NavLink to="/users" activeclass="active">Users</NavLink></li>
+                    </ul>
+                </nav>
+                <Switch>
+                    <ProtectedRoute path="/users" exact={true} component={UserList} currentUserId={currentUserId} />
+                    <AuthRoute path="/login" component={LoginForm} />
+                    <Route path="/">
+                        <h1>My Home Page</h1>
+                    </Route>
+                </Switch>
+            </BrowserRouter>
+        </ThemeProvider>
+    );
 }
 
 export default App;

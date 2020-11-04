@@ -1,8 +1,8 @@
-import React, { useEffect, useState, createContext } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import User from './User';
 
-function UsersList (props) {
+const UsersList = () => {
     const [users, setUsers] = useState([]);
 
     useEffect(() => {
