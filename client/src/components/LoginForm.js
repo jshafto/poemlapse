@@ -1,47 +1,28 @@
 import React, {useState, useContext} from 'react';
-import { useHistory } from 'react-router-dom'
-import AuthContext from '../auth'
+import { useHistory } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { login } from '../store/authentication';
 
 function UserForm(props) {
-    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     let history = useHistory();
+    const dispatch = useDispatch();
 
-    const [errors, setErrors] = useState([]);
-    const { fetchWithCSRF, setCurrentUserId } = useContext(AuthContext);
+    const errmsg = useSelector(state => state.errors.auth);
+
     const submitForm = (e) => {
         e.preventDefault();
-
-        async function loginUser() {
-            const response = await fetchWithCSRF(`/login`, {
-                method: 'POST',
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: 'include',
-                body: JSON.stringify({
-                    username,
-                    password
-                })
-            });
-
-            const responseData = await response.json();
-            if (!response.ok) {
-                setErrors(responseData.errors);
-            } else {
-                setCurrentUserId(responseData.current_user_id)
-                history.push('/users')
-            }
-        }
-        loginUser();
+        dispatch(login(email, password))
     }
     return (
         <form onSubmit={submitForm}>
-            {errors.length ? errors.map((err) => <li key={err} >{err}</li>) : ''}
+            {(errmsg) ? <li>{errmsg}</li> : null}
             <div className="field">
-                <label>Username: </label>
+                <label>Email: </label>
                 <div className="control">
-                    <input className="input" type="text" value={username} onChange={(e) => setUsername(e.target.value)} name="username" />
+                    <input className="input" type="text" value={email} onChange={(e) => setEmail(e.target.value)} name="email" />
                 </div>
                 <label>Password: </label>
                 <div className="control">

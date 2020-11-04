@@ -60,4 +60,20 @@ class User(db.Model, UserMixin):
             raise AssertionError('No email provided')
         if not re.match("[^@]+@[^@]+\.[^@]+", email):
             raise AssertionError('Provided email is not an email address')
+        if User.query.filter(User.email == email).first():
+            raise AssertionError('Email is already in use')
         return email
+
+    # @validates('username', 'email')
+    # def validate_username_email(self, key, username, email):
+    #     errs = dict()
+    #     if not username:
+    #         errs['email'] = 'No username provided'
+    #     elif User.query.filter(User.username == username).first():
+    #         errs['email'] = 'Username is already in use'
+    #     elif len(username) < 2 or len(username) > 20:
+    #         errs['email'] = 'Username must be between 2 and 25 characters'
+
+    #     if errs:
+    #         raise AssertionError(errs)
+    #     return username, email

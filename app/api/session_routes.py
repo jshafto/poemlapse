@@ -27,14 +27,12 @@ def signup():
     if not password:
         return 'Password not found', 400
 
-    user = User(username=username, email=email, password=password)
-
     try:
+        user = User(username=username, email=email, password=password)
         db.session.add(user)
         db.session.commit()
-
     except AssertionError as exception_message:
-        return jsonify(msg=f'Error: {exception_message}. '), 400
+        return jsonify(msg=str(exception_message)), 400
 
     login_user(user)
     resp = jsonify(current_user=user.to_dict())
@@ -45,7 +43,7 @@ def signup():
 @session_routes.route('/login', methods=['POST'])
 def login():
     if not request.is_json:
-        return jsonify({"msg": ["Missing JSON in request"]}), 400
+        return jsonify({"msg": "Missing JSON in request"}), 400
     email = request.json.get('email', None)
     password = request.json.get('password', None)
 
@@ -61,7 +59,7 @@ def login():
         resp = jsonify(current_user=user.to_dict())
         return resp, 200
 
-    return {'errors': ['Invalid email or password']}, 401
+    return {'msg': 'Invalid email or password'}, 401
 
 
 @session_routes.route('/logout', methods=['POST'])
