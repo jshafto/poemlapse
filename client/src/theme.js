@@ -21,6 +21,10 @@ export const themeObj = {
         background: {
             default: "#FFF5EE",
         },
+        action: {
+            selected: '#FFA4B9',
+            hover: '#FFDDE1',
+        }
 
     },
     overrides: {

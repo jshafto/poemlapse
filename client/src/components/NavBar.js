@@ -19,6 +19,10 @@ const useStyles = makeStyles(theme => ({
         fontWeight: '600',
         marginRight: 5,
         marginLeft: 5,
+        '&:hover': {
+            backgroundColor: 'transparent',
+            fontStyle: 'italic', //possibly not so great, but matches original
+        }
     },
 
     others: {

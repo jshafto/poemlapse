@@ -12,10 +12,14 @@ import EditIcon from '@material-ui/icons/Edit';
 import HistoryIcon from '@material-ui/icons/History';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import IconButton from '@material-ui/core/IconButton';
 import PlayArrowRoundedIcon from '@material-ui/icons/PlayArrowRounded';
 import PauseIcon from '@material-ui/icons/Pause';
 import AddIcon from '@material-ui/icons/Add';
+import RemoveIcon from '@material-ui/icons/Remove';
+import TextFormatIcon from '@material-ui/icons/TextFormat';
 
 
 const useStyles = makeStyles(theme => ({
@@ -34,9 +38,10 @@ const useStyles = makeStyles(theme => ({
         width: "100%",
         flexGrow: 2,
         resize: "none",
+        paddingTop: 0,
         paddingLeft: 25,
         paddingRight: 25,
-        marginBottom:25,
+        marginBottom: 25,
         "&:focus": {
             outline: "none"
         },
@@ -51,16 +56,16 @@ const useStyles = makeStyles(theme => ({
 
         paddingLeft: 25,
         paddingRight: 25,
-        marginBottom:25,
+        marginBottom: 25,
         whiteSpace: 'pre-line',
-        verticalAlign: "top"
     },
     editorButtons: {
         paddingTop: 10,
-        paddingLeft:10,
+        paddingLeft: 10,
         paddingRight: 10,
         display: 'flex',
-        justifyContent: 'flex-end'
+        justifyContent: 'flex-end',
+        alignItems: 'center',
     },
     buttonGroup: {
         backgroundColor: theme.palette.primary.main,
@@ -72,6 +77,19 @@ const useStyles = makeStyles(theme => ({
     grouped: {
         border: "none",
         borderRadius: 32,
+    },
+    fontSizeIcons: {
+        backgroundColor: theme.palette.primary.main,
+        color: "rgba(255,255,255,0.9)",
+        "&:hover": {
+            backgroundColor: theme.palette.primary.dark,
+        },
+        padding: 6,
+        height: 36,
+        margin: 5,
+    },
+    menu: {
+        background: theme.palette.background.default,
     },
     controls: {
         margin: 20,
@@ -88,7 +106,7 @@ const useStyles = makeStyles(theme => ({
     },
     icons: {
         color: "rgba(255,255,255,0.9)",
-    }
+    },
 }))
 
 
@@ -120,13 +138,16 @@ const reconstruct = (initial, changes, index) => {
     return changes.slice(0, index).reduce((acc, val) => step(acc, val), initial)
 }
 
-const fonts = {
-    default: `"Nunito Sans", "Futura", "Helvetica", sans-serif`,
-}
+const fonts = [
+    {label: "default", val: `"Nunito Sans", "Futura", sans-serif`},
+    {label: "sans-serif", val: `"Helvetica", sans-serif`},
+    {label: "monospace", val: "monospace"},
+    {label: "serif", val: `'EB Garamond', serif`},
+]
+const textSizes = [".6rem", ".8rem", "1rem", "1.2rem", "1.4rem"];
 
 const Editor = () => {
     const classes = useStyles();
-    const textSizes = [".6rem", ".8rem", "1rem", "1.2rem", "1.4rem"];
     const [title, setTitle] = useState("poem")
     const [changes, setChanges] = useState([]);
     const [editingTitle, setEditingTitle] = useState(false);
@@ -134,20 +155,21 @@ const Editor = () => {
     const [textSize, setTextSize] = useState(2);
     const [replayVal, setReplayVal] = useState(changes.length);
     const [editMode, setEditMode] = useState(true);
-    const [editorFont, setEditorFont] = useState("default");
+    const [editorFont, setEditorFont] = useState(0);
     const [playing, setPlaying] = useState(false);
     const [playingInterval, setPlayingInterval] = useState(null);
+    const [fontMenuAnchor, setFontMenuAnchor] = useState(null);
 
 
     const handleClickPlay = () => {
         clearInterval(playingInterval)
         setPlaying(true);
         // let first = true;
-        if (replayVal>=changes.length) {
+        if (replayVal >= changes.length) {
             setReplayVal(0)
         }
         const interval = setInterval(() => {
-            setReplayVal(replayVal => replayVal+1)
+            setReplayVal(replayVal => replayVal + 1)
         }, 100)
         setPlayingInterval(interval);
     }
@@ -167,13 +189,19 @@ const Editor = () => {
         }
     }
 
+    const updateFont = (index) => {
+        setFontMenuAnchor(null);
+        setEditorFont(index);
+    }
+
     const handleUpdate = (e) => {
         setChanges([...changes, compareStrings(poemField, e.target.value)]);
         setPoemField(e.target.value);
     }
 
+
     useEffect(() => {
-        if (replayVal>=changes.length) {
+        if (replayVal >= changes.length) {
             clearInterval(playingInterval)
             setPlaying(false);
         }
@@ -199,13 +227,47 @@ const Editor = () => {
                         {title}
                     </Typography>
                 )}
-            <Paper className={classes.edit} variant="outlined">
+            <Paper className={classes.edit} variant="outlined" >
                 <div className={classes.editorButtons}>
-                    <IconButton size="small">
-                        <>
+                    <IconButton
+                        className={classes.fontSizeIcons}
+                        size="small"
+                        onClick={() => setTextSize(textSize - 1)}
+                        disabled={textSize <= 0}>
+                        <RemoveIcon />
                     </IconButton>
+                    <IconButton
+                        className={classes.fontSizeIcons}
+                        size="small"
+                        onClick={() => setTextSize(textSize + 1)}
+                        disabled={textSize >= textSizes.length - 1}>
+                        <AddIcon />
+                    </IconButton>
+                    <IconButton
+                        className={classes.fontSizeIcons}
+                        size="small"
+                        onClick={(e)=>setFontMenuAnchor(e.currentTarget)}>
+                        <TextFormatIcon />
+                    </IconButton>
+                    <Menu
+                        MenuListProps={{className: classes.menu}}
+                        elevation={0}
+                        anchorEl={fontMenuAnchor}
+                        open={Boolean(fontMenuAnchor)}
+                        onClose= {()=>setFontMenuAnchor(null)}
+                    >
+                        {fonts.map((font, ind)=>(
+                            <MenuItem
+                                // classes={{selected: classes.selected, root: classes.menuItemRoot}}
+                                key={ind}
+                                selected={ind===editorFont}
+                                onClick={()=>updateFont(ind)}>
+                                {font.label}
+                            </MenuItem>
+                        ))}
+                    </Menu>
                     <ToggleButtonGroup
-                    size="small"
+                        size="small"
                         value={editMode}
                         exclusive
                         onChange={updateEditMode}
@@ -215,7 +277,7 @@ const Editor = () => {
                             <EditIcon className={classes.icons} />
                         </ToggleButton>
                         <ToggleButton onClick={() => setReplayVal(changes.length)} value={false} className={classes.grouped}>
-                            <HistoryIcon className={classes.icons}/>
+                            <HistoryIcon className={classes.icons} />
                         </ToggleButton>
                     </ToggleButtonGroup>
                 </div>
@@ -226,7 +288,7 @@ const Editor = () => {
                         onChange={handleUpdate}
                         style={{
                             fontSize: textSizes[textSize],
-                            fontFamily: fonts[editorFont],
+                            fontFamily: fonts[editorFont].val,
                         }} />
                 ) : (
                         <div className={classes.replayContainer}>
@@ -234,36 +296,36 @@ const Editor = () => {
                                 className={classes.replayWindow}
                                 style={{
                                     fontSize: textSizes[textSize],
-                                    fontFamily: fonts[editorFont],
+                                    fontFamily: fonts[editorFont].val,
                                 }}>
                                 {reconstruct("", changes, replayVal)}
                             </div>
                         </div>
                     )}
-            {(!editMode) ? (
-                <div className={classes.controls}>
-                    {(playing) ? (
-                        <IconButton onClick={handleClickPause} size="small">
-                            <PauseIcon
-                            className={classes.icons}/>
-                        </IconButton>
-                    ) : (
-                    <IconButton onClick={handleClickPlay} size="small">
-                        <PlayArrowRoundedIcon
-                            className={classes.icons}/>
-                    </IconButton>
-                    )}
-                    <Slider
-                        className={classes.slider}
-                        // autoFocus // to do: get this to focus automatically
-                        step={1}
-                        min={0}
-                        max={changes.length}
-                        value={replayVal}
-                        onChange={(e, val) => setReplayVal(val)}
+                {(!editMode) ? (
+                    <div className={classes.controls}>
+                        {(playing) ? (
+                            <IconButton onClick={handleClickPause} size="small">
+                                <PauseIcon
+                                    className={classes.icons} />
+                            </IconButton>
+                        ) : (
+                                <IconButton onClick={handleClickPlay} size="small">
+                                    <PlayArrowRoundedIcon
+                                        className={classes.icons} />
+                                </IconButton>
+                            )}
+                        <Slider
+                            className={classes.slider}
+                            // autoFocus // to do: get this to focus automatically
+                            step={1}
+                            min={0}
+                            max={changes.length}
+                            value={replayVal}
+                            onChange={(e, val) => setReplayVal(val)}
                         />
-                </div>
-            ) : (null)}
+                    </div>
+                ) : (null)}
             </Paper>
         </Container>
     )
