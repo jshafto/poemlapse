@@ -1,12 +1,4 @@
 export const themeObj = {
-    // typography: {
-    //     fontFamily: `"Inter", "Helvetica", sans-serif `
-    // },
-    palette: {
-        background: {
-            default: "#FFF5EE",
-        },
-    },
     typography: {
         button: {
             textTransform: 'none',
@@ -20,5 +12,31 @@ export const themeObj = {
             // The properties to apply
             disableRipple: true,
         },
+    },
+    palette: {
+        primary: {
+            main: "#FFCED4",
+            dark: "#FFA4B9"
+        },
+        background: {
+            default: "#FFF5EE",
+        },
+
+    },
+    overrides: {
+        MuiToggleButton: {
+            root: {
+                '&$selected': {
+                    backgroundColor: "rgba(255,145,175,0.7)",
+                    '&:hover': {
+                        backgroundColor: "rgba(255,145,175,0.7)",
+                    }
+                },
+                '&:hover': {
+                    backgroundColor: "rgba(255,145,175,0.3)",
+                }
+
+            },
+        }
     },
 }
