@@ -34,6 +34,9 @@ function App() {
                 <NavBar />
                 <Switch>
                     <ProtectedRoute path="/users" exact={true} component={UserList}/>
+                    <Route path="/editor" >
+                        <Editor />
+                        </Route>
                     <AuthRoute path="/login" component={LoginForm} />
                     <Route path="/">
                         <h1>My Home Page</h1>

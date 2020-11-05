@@ -14,4 +14,11 @@ export const themeObj = {
         },
         fontFamily: `"Nunito Sans", "Futura", "Helvetica", sans-serif `
     },
+    props: {
+        // Name of the component ⚛️
+        MuiButtonBase: {
+            // The properties to apply
+            disableRipple: true,
+        },
+    },
 }

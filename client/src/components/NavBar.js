@@ -38,14 +38,14 @@ const NavBar = () => {
     return (
         <AppBar
             color='transparent'
-            elevation='0'
+            elevation={0}
             position='static' >
             <Toolbar className={classes.bar}>
                 <Button className={classes.button} component={NavLink} to="/">
                     PoemLapse
                 </Button>
                 <div className={classes.others}>
-                    <Button component={NavLink} to='/users' className={classes.button}>Users</Button>
+                    <Button component={NavLink} to='/editor' className={classes.button}>Editor</Button>
                     {(loggedOut) ? (
 
                         <Button component={NavLink} to="/login" className={classes.button}>Login</Button>
