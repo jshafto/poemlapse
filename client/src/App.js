@@ -7,16 +7,18 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 
 import UserList from './components/UsersList';
 import LoginForm from './components/LoginForm';
-import { logout } from './store/authentication';
-import { restoreCSRF } from './store/csrf'
-
+import NavBar from './components/NavBar';
+import Editor from './components/Editor';
+import { restoreCSRF } from './store/csrf';
+import { themeObj } from './theme'
 import { ProtectedRoute, AuthRoute } from './Routes';
 
 
+
 function App() {
-    const theme = createMuiTheme();
+    const theme = createMuiTheme(themeObj);
     const dispatch = useDispatch();
-    const currentUserId = useSelector(state => state.authentication.id);
+
 
 
     useEffect(() => {
@@ -29,16 +31,12 @@ function App() {
         <ThemeProvider theme={theme}>
             <CssBaseline />
             <BrowserRouter>
-                <nav>
-                    <ul>
-                        <li><NavLink to="/" activeclass="active">Home</NavLink></li>
-                        <li><NavLink to="/login" activeclass="active">Login</NavLink></li>
-                        <li><a onClick={logout} href="#" activeclass="active">Logout</a></li>
-                        <li><NavLink to="/users" activeclass="active">Users</NavLink></li>
-                    </ul>
-                </nav>
+                <NavBar />
                 <Switch>
-                    <ProtectedRoute path="/users" exact={true} component={UserList} currentUserId={currentUserId} />
+                    <ProtectedRoute path="/users" exact={true} component={UserList}/>
+                    <Route path="/editor" >
+                        <Editor />
+                        </Route>
                     <AuthRoute path="/login" component={LoginForm} />
                     <Route path="/">
                         <h1>My Home Page</h1>

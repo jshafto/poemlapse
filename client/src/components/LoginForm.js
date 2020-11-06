@@ -4,10 +4,9 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { login } from '../store/authentication';
 
-function LoginForm(props) {
+const LoginForm = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    let history = useHistory();
     const dispatch = useDispatch();
 
     const errmsg = useSelector(state => state.errors.auth);
