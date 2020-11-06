@@ -1,7 +1,9 @@
 import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
-export const ProtectedRoute = ({ component: Component, path, currentUserId, exact }) => {
+export const ProtectedRoute = ({ component: Component, path, exact }) => {
+  const currentUserId = useSelector(state => state.authentication.id);
   return (
     <Route
       path={path}
@@ -13,7 +15,8 @@ export const ProtectedRoute = ({ component: Component, path, currentUserId, exac
   );
 };
 
-export const AuthRoute = ({ component: Component, path, currentUserId, exact }) => {
+export const AuthRoute = ({ component: Component, path, exact }) => {
+  const currentUserId = useSelector(state => state.authentication.id);
   return (
     <Route
       path={path}
