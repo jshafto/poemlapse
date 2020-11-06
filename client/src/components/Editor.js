@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 
-import Paper from '@material-ui/core/Paper';
-import Container from '@material-ui/core/Container';
+import { format } from 'date-fns';
 
 import { makeStyles } from '@material-ui/styles';
+import Paper from '@material-ui/core/Paper';
+import Container from '@material-ui/core/Container';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
@@ -14,6 +15,7 @@ import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import Tooltip from '@material-ui/core/Tooltip'
 import IconButton from '@material-ui/core/IconButton';
 import PlayArrowRoundedIcon from '@material-ui/icons/PlayArrowRounded';
 import PauseIcon from '@material-ui/icons/Pause';
@@ -21,6 +23,7 @@ import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
 import TextFormatIcon from '@material-ui/icons/TextFormat';
 
+import SliderLabel from './SliderLabel'
 
 const useStyles = makeStyles(theme => ({
     title: {
@@ -131,7 +134,8 @@ const compareStrings = (str, next) => {
     }
 
     inserted = next.slice(front, next.length - end);
-    return { inserted, front, end }
+    const t = new Date();
+    return { inserted, front, end, t }
 }
 
 const reconstruct = (initial, changes, index) => {
@@ -229,6 +233,7 @@ const Editor = () => {
                 )}
             <Paper className={classes.edit} variant="outlined" >
                 <div className={classes.editorButtons}>
+                <Tooltip title="Decrease Font Size">
                     <IconButton
                         className={classes.fontSizeIcons}
                         size="small"
@@ -236,6 +241,8 @@ const Editor = () => {
                         disabled={textSize <= 0}>
                         <RemoveIcon />
                     </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Increase Font Size">
                     <IconButton
                         className={classes.fontSizeIcons}
                         size="small"
@@ -243,12 +250,15 @@ const Editor = () => {
                         disabled={textSize >= textSizes.length - 1}>
                         <AddIcon />
                     </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Font...">
                     <IconButton
                         className={classes.fontSizeIcons}
                         size="small"
                         onClick={(e)=>setFontMenuAnchor(e.currentTarget)}>
                         <TextFormatIcon />
                     </IconButton>
+                    </Tooltip>
                     <Menu
                         MenuListProps={{className: classes.menu}}
                         elevation={0}
@@ -266,6 +276,7 @@ const Editor = () => {
                             </MenuItem>
                         ))}
                     </Menu>
+                    <Tooltip title="Edit/Replay">
                     <ToggleButtonGroup
                         size="small"
                         value={editMode}
@@ -273,13 +284,16 @@ const Editor = () => {
                         onChange={updateEditMode}
                         className={classes.buttonGroup}
                     >
+
                         <ToggleButton value={true} className={classes.grouped}>
                             <EditIcon className={classes.icons} />
                         </ToggleButton>
+
                         <ToggleButton onClick={() => setReplayVal(changes.length)} value={false} className={classes.grouped}>
                             <HistoryIcon className={classes.icons} />
                         </ToggleButton>
                     </ToggleButtonGroup>
+                    </Tooltip>
                 </div>
                 {(editMode) ? (
                     <textarea
@@ -322,6 +336,10 @@ const Editor = () => {
                             min={0}
                             max={changes.length}
                             value={replayVal}
+                            valueLabelDisplay="auto"
+                            valueLabelFormat={(x)=>(changes[x-1])? format(changes[x-1].t,'p \n MM/dd'): 'Begin'}
+                            ValueLabelComponent={SliderLabel}
+                            // marks={changes.map((ch,ind)=> ({value: format(ch.t,'MM/dd/yyyy')}))}
                             onChange={(e, val) => setReplayVal(val)}
                         />
                     </div>
