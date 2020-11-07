@@ -24,7 +24,7 @@ def new_draft():
     except AssertionError as exception_message:
         return jsonify(msg=str(exception_message)), 400
 
-    return draft.to_dict()
+    return {"id": draft.id}
 
 
 @draft_routes.route('/<draft_id>', methods=['PUT'])
