@@ -3,6 +3,7 @@ from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import validates
 from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy.sql import func
 
 db = SQLAlchemy()
 
@@ -15,11 +16,13 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(255), nullable=False, unique=True)
     hashed_password = db.Column(db.String(255), nullable=False)
 
+    drafts = db.relationship('Draft', back_populates='user')
+
     def to_dict(self):
         return {
-            "id": self.id,
-            "username": self.username,
-            "email": self.email
+            'id': self.id,
+            'username': self.username,
+            'email': self.email
         }
 
     @property
@@ -58,22 +61,61 @@ class User(db.Model, UserMixin):
     def validate_email(self, key, email):
         if not email:
             raise AssertionError('No email provided')
-        if not re.match("[^@]+@[^@]+\.[^@]+", email):
+        if not re.match(r'[^@]+@[^@]+\.[^@]+', email):
             raise AssertionError('Provided email is not an email address')
         if User.query.filter(User.email == email).first():
             raise AssertionError('Email is already in use')
         return email
 
-    # @validates('username', 'email')
-    # def validate_username_email(self, key, username, email):
-    #     errs = dict()
-    #     if not username:
-    #         errs['email'] = 'No username provided'
-    #     elif User.query.filter(User.username == username).first():
-    #         errs['email'] = 'Username is already in use'
-    #     elif len(username) < 2 or len(username) > 20:
-    #         errs['email'] = 'Username must be between 2 and 25 characters'
 
-    #     if errs:
-    #         raise AssertionError(errs)
-    #     return username, email
+class Draft(db.Model):
+    __tablename__ = 'drafts'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    title = db.Column(db.String(150), nullable=False)
+    changes = db.Column(db.Text)
+    date_created = db.Column(db.DateTime, nullable=False,
+                             server_default=func.now())
+    date_updated = db.Column(db.DateTime, nullable=False,
+                             server_default=func.now(), onupdate=func.now())
+
+    user = db.relationship('User', back_populates='drafts')
+
+    def to_dict(self):
+        if self.changes:
+            return {
+                'id': self.id,
+                'user_id': self.user_id,
+                'title': self.title,
+                'changes': self.changes,
+                'date_created': self.date_created,
+                'date_updated': self.date_updated,
+            }
+        else:
+            return {
+                'id': self.id,
+                'user_id': self.user_id,
+                'title': self.title,
+                'date_created': self.date_created,
+                'date_updated': self.date_updated,
+            }
+
+    def draft_info(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'title': self.title,
+            'date_created': self.date_created,
+            'date_updated': self.date_updated,
+        }
+
+    @validates('title')
+    def validate_title(self, key, title):
+        if not title:
+            raise AssertionError('No title provided')
+        if len(title) > 150:
+            raise AssertionError('Title cannot be longer than 150 characters')
+        if (Draft.query.filter_by(user_id=self.user_id, title=title).first()):
+            raise AssertionError('You already have a poem with that title')
+        return title
