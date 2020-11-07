@@ -1,7 +1,7 @@
 import { authError } from './errors'
 // constants
-export const SET_USER = '/poemlapse/authentication/SET_USER';
-export const REMOVE_USER = '/poemlapse/authentication/REMOVE_USER';
+export const SET_USER = 'poemlapse/authentication/SET_USER';
+export const REMOVE_USER = 'poemlapse/authentication/REMOVE_USER';
 // action creators
 export const setUser = (user) => ({
     type: SET_USER,
