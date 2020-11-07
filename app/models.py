@@ -119,6 +119,7 @@ class Draft(db.Model):
             raise AssertionError('No title provided')
         if len(title) > 150:
             raise AssertionError('Title cannot be longer than 150 characters')
-        if (Draft.query.filter_by(user_id=self.user_id, title=title).first()):
-            raise AssertionError('You already have a poem with that title')
+        # if (Draft.query.filter_by(user_id=self.user_id,
+        #                           title=title).first()):
+        #     raise AssertionError('You already have a poem with that title')
         return title

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter, Switch, Route, NavLink } from 'react-router-dom';
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 import { ThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -9,6 +9,7 @@ import UserList from './components/UsersList';
 import LoginForm from './components/LoginForm';
 import NavBar from './components/NavBar';
 import Editor from './components/Editor';
+import DraftEditor from './components/DraftEditor';
 import LandingOrDashboard from './components/LandingOrDashboard'
 import { restoreCSRF } from './store/csrf';
 import { themeObj } from './theme'
@@ -35,9 +36,12 @@ function App() {
                 <NavBar />
                 <Switch>
                     <ProtectedRoute path="/users" exact={true} component={UserList}/>
-                    <Route path="/editor" >
+                    <Route exact path="/editor" >
                         <Editor />
-                        </Route>
+                    </Route>
+                    <Route path="/drafts/:draftId" >
+                        <DraftEditor />
+                    </Route>
                     <AuthRoute path="/login" component={LoginForm} />
                     <Route path="/">
                         <LandingOrDashboard />
