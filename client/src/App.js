@@ -9,6 +9,7 @@ import UserList from './components/UsersList';
 import LoginForm from './components/LoginForm';
 import NavBar from './components/NavBar';
 import Editor from './components/Editor';
+import LandingOrDashboard from './components/LandingOrDashboard'
 import { restoreCSRF } from './store/csrf';
 import { themeObj } from './theme'
 import { ProtectedRoute, AuthRoute } from './Routes';
@@ -39,7 +40,7 @@ function App() {
                         </Route>
                     <AuthRoute path="/login" component={LoginForm} />
                     <Route path="/">
-                        <h1>My Home Page</h1>
+                        <LandingOrDashboard />
                     </Route>
                 </Switch>
             </BrowserRouter>
