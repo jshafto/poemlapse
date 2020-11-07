@@ -27,3 +27,17 @@ def update_draft(draft_id):
         return jsonify(msg=str(exception_message)), 400
 
     return draft.to_dict(), 200
+
+
+@draft_routes.route('/<draft_id>')
+@login_required
+def get_draft(draft_id):
+    draft_id = int(draft_id)
+    user_id = current_user.id
+
+    draft = Draft.query.get(draft_id)
+
+    if not draft or not user_id == draft.user_id:
+        return {'msg': 'Draft not found'}, 404
+
+    return draft.to_dict(), 200
