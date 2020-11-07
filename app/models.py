@@ -75,6 +75,7 @@ class Draft(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     title = db.Column(db.String(150), nullable=False)
     changes = db.Column(db.Text)
+    beginning = db.Column(db.String(280))
     date_created = db.Column(db.DateTime, nullable=False,
                              server_default=func.now())
     date_updated = db.Column(db.DateTime, nullable=False,
@@ -89,6 +90,7 @@ class Draft(db.Model):
                 'user_id': self.user_id,
                 'title': self.title,
                 'changes': self.changes,
+                'beginning': self.beginning,
                 'date_created': self.date_created,
                 'date_updated': self.date_updated,
             }
@@ -106,6 +108,7 @@ class Draft(db.Model):
             'id': self.id,
             'user_id': self.user_id,
             'title': self.title,
+            'beginning': self.beginning,
             'date_created': self.date_created,
             'date_updated': self.date_updated,
         }
