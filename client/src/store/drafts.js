@@ -81,7 +81,7 @@ export const updateDraft = (draft_id,
     beginning = null) => async (dispatch, getState) => {
         const csrf = getState().csrf;
         const requestOptions = {
-            method: "POST",
+            method: "PUT",
             headers: {
                 "Content-Type": "application/json",
                 "X-CSRFToken": csrf,

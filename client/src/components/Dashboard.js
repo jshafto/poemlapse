@@ -3,8 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, NavLink } from 'react-router-dom'
 
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
 import Container from '@material-ui/core/Container';
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
+import Tooltip from '@material-ui/core/Tooltip'
+
 
 import { newDraft, fetchingDraft, getDrafts } from '../store/drafts'
 
@@ -34,7 +37,11 @@ const Dashboard = () => {
     return (
         <Container>
             <Typography variant="h4">Drafts</Typography>
-            <Button onClick={createPoem}>Create new poem</Button>
+            <Tooltip title="New Draft">
+            <IconButton color="primary" variant="outlined" onClick={createPoem}>
+                <AddCircleOutlineIcon />
+            </IconButton>
+            </Tooltip>
             {drafts.map(draft=>(
                 <div key={draft.id}>
                 <NavLink to={`/drafts/${draft.id}`} >
