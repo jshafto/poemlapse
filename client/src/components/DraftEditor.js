@@ -27,7 +27,7 @@ import TextFormatIcon from '@material-ui/icons/TextFormat';
 
 import SliderLabel from './SliderLabel';
 import { compareStrings, reconstruct } from '../utils/editorUtils';
-import { getActiveDraft, clearActiveDraft } from '../store/drafts'
+import { getActiveDraft, clearActiveDraft, updateDraft } from '../store/drafts';
 
 const useStyles = makeStyles(theme => ({
     title: {
@@ -119,16 +119,22 @@ const useStyles = makeStyles(theme => ({
 
 
 const fonts = [
-    {label: "default", val: `"Nunito Sans", "Futura", sans-serif`},
-    {label: "sans-serif", val: `"Helvetica", sans-serif`},
-    {label: "monospace", val: "monospace"},
-    {label: "serif", val: `'EB Garamond', serif`},
+    { label: "default", val: `"Nunito Sans", "Futura", sans-serif` },
+    { label: "sans-serif", val: `"Helvetica", sans-serif` },
+    { label: "monospace", val: "monospace" },
+    { label: "serif", val: `'EB Garamond', serif` },
 ]
 const textSizes = [".6rem", ".8rem", "1rem", "1.2rem", "1.4rem"];
 
 const DraftEditor = () => {
     const classes = useStyles();
-    const [titleField, setTitleField] = useState("poem")
+
+    const userId = useSelector(state => state.authentication.id)
+    const storedTitle = useSelector(state => state.entities.drafts.activeDraft.title)
+    const storedChanges = useSelector(state => state.entities.drafts.activeDraft.changes)
+    const storedBeginning = useSelector(state => state.entities.drafts.activeDraft.beginning)
+
+    const [titleField, setTitleField] = useState(storedTitle || "")
     const [changes, setChanges] = useState([]);
     const [editingTitle, setEditingTitle] = useState(false);
     const [poemField, setPoemField] = useState("");
@@ -139,25 +145,50 @@ const DraftEditor = () => {
     const [playing, setPlaying] = useState(false);
     const [playingInterval, setPlayingInterval] = useState(null);
     const [fontMenuAnchor, setFontMenuAnchor] = useState(null);
+    const [saveTimeout, setSaveTimeout] = useState(null)
 
     const { draftId } = useParams();
     const dispatch = useDispatch();
 
-    const userId = useSelector(state=> state.authentication.id)
-    const storedTitle = useSelector(state=>state.entities.drafts.activeDraft.title)
 
-    const postErrors = useSelector(state=> state.errors.post);
 
     useEffect(() => {
         dispatch(getActiveDraft(draftId));
         return () => dispatch(clearActiveDraft())
-      }, [draftId, dispatch, userId])
+    }, [draftId, dispatch, userId])
 
+    useEffect(() => {
+        if (replayVal >= changes.length) {
+            clearInterval(playingInterval)
+            setPlaying(false);
+        }
+    }, [replayVal, playingInterval])
+
+
+    useEffect(() => {
+        if (storedChanges) {
+            const parsedChanges = JSON.parse(storedChanges);
+            setChanges(parsedChanges)
+            if (poemField==="") {
+                setPoemField(reconstruct("", parsedChanges, parsedChanges.length))
+            }
+        }
+    }, [storedChanges])
+
+    const handleClickTitle = () => {
+        setTitleField(storedTitle);
+        setEditingTitle(true);
+
+    }
+    const submitNewTitle = (e) => {
+        e.preventDefault()
+        dispatch(updateDraft(draftId, titleField));
+        setEditingTitle(false)
+    }
 
     const handleClickPlay = () => {
         clearInterval(playingInterval)
         setPlaying(true);
-        // let first = true;
         if (replayVal >= changes.length) {
             setReplayVal(0)
         }
@@ -186,105 +217,105 @@ const DraftEditor = () => {
         setFontMenuAnchor(null);
         setEditorFont(index);
     }
+    const saveChanges = () => {
+        const beginning = poemField.slice(0,280)
+        dispatch(updateDraft(draftId, null, JSON.stringify(changes), beginning))
+    }
 
     const handleUpdate = (e) => {
+        clearTimeout(saveTimeout);
         setChanges([...changes, compareStrings(poemField, e.target.value)]);
         setPoemField(e.target.value);
+        const timeout = setTimeout(saveChanges, 3000);
+        setSaveTimeout(timeout);
     }
 
 
-    useEffect(() => {
-        if (replayVal >= changes.length) {
-            clearInterval(playingInterval)
-            setPlaying(false);
-        }
-    }, [replayVal, playingInterval])
 
-
-    useEffect(() => {
-
-    }, [])
     return (
         <Container maxWidth="md">
             {(editingTitle) ? (
                 <ClickAwayListener onClickAway={() => setEditingTitle(false)}>
-                    <TextField
-                        className={classes.title}
-                        value={titleField}
-                        onChange={e => setTitleField(e.target.value)}
-                        onBlur={() => setEditingTitle(false)}
-                    />
+                    <form onSubmit={submitNewTitle}>
+                        <TextField
+                            autoFocus
+                            className={classes.title}
+                            value={titleField}
+                            onChange={e => setTitleField(e.target.value)}
+                            onBlur={() => setEditingTitle(false)}
+                        />
+                    </form>
                 </ClickAwayListener>
             ) : (
                     <Typography
                         className={classes.title}
                         variant="h6"
-                        onClick={() => setEditingTitle(true)}>
+                        onClick={handleClickTitle}>
                         {storedTitle}
                     </Typography>
                 )}
             <Paper className={classes.edit} variant="outlined" >
                 <div className={classes.editorButtons}>
-                <Tooltip title="Decrease Font Size">
-                    <IconButton
-                        className={classes.fontSizeIcons}
-                        size="small"
-                        onClick={() => setTextSize(textSize - 1)}
-                        disabled={textSize <= 0}>
-                        <RemoveIcon />
-                    </IconButton>
+                    <Tooltip title="Decrease Font Size">
+                        <IconButton
+                            className={classes.fontSizeIcons}
+                            size="small"
+                            onClick={() => setTextSize(textSize - 1)}
+                            disabled={textSize <= 0}>
+                            <RemoveIcon />
+                        </IconButton>
                     </Tooltip>
                     <Tooltip title="Increase Font Size">
-                    <IconButton
-                        className={classes.fontSizeIcons}
-                        size="small"
-                        onClick={() => setTextSize(textSize + 1)}
-                        disabled={textSize >= textSizes.length - 1}>
-                        <AddIcon />
-                    </IconButton>
+                        <IconButton
+                            className={classes.fontSizeIcons}
+                            size="small"
+                            onClick={() => setTextSize(textSize + 1)}
+                            disabled={textSize >= textSizes.length - 1}>
+                            <AddIcon />
+                        </IconButton>
                     </Tooltip>
                     <Tooltip title="Font...">
-                    <IconButton
-                        className={classes.fontSizeIcons}
-                        size="small"
-                        onClick={(e)=>setFontMenuAnchor(e.currentTarget)}>
-                        <TextFormatIcon />
-                    </IconButton>
+                        <IconButton
+                            className={classes.fontSizeIcons}
+                            size="small"
+                            onClick={(e) => setFontMenuAnchor(e.currentTarget)}>
+                            <TextFormatIcon />
+                        </IconButton>
                     </Tooltip>
                     <Menu
-                        MenuListProps={{className: classes.menu}}
+                        MenuListProps={{ className: classes.menu }}
                         elevation={0}
                         anchorEl={fontMenuAnchor}
                         open={Boolean(fontMenuAnchor)}
-                        onClose= {()=>setFontMenuAnchor(null)}
+                        onClose={() => setFontMenuAnchor(null)}
                     >
-                        {fonts.map((font, ind)=>(
+                        {fonts.map((font, ind) => (
                             <MenuItem
                                 // classes={{selected: classes.selected, root: classes.menuItemRoot}}
                                 key={ind}
-                                selected={ind===editorFont}
-                                onClick={()=>updateFont(ind)}>
+                                selected={ind === editorFont}
+                                onClick={() => updateFont(ind)}>
                                 {font.label}
                             </MenuItem>
                         ))}
                     </Menu>
                     <Tooltip title="Edit/Replay">
-                    <ToggleButtonGroup
-                        size="small"
-                        value={editMode}
-                        exclusive
-                        onChange={updateEditMode}
-                        className={classes.buttonGroup}
-                    >
+                        <ToggleButtonGroup
+                            size="small"
+                            value={editMode}
+                            exclusive
+                            onChange={updateEditMode}
+                            className={classes.buttonGroup}
+                        >
 
-                        <ToggleButton value={true} className={classes.grouped}>
-                            <EditIcon className={classes.icons} />
-                        </ToggleButton>
+                            <ToggleButton value={true} className={classes.grouped}>
+                                <EditIcon className={classes.icons} />
+                            </ToggleButton>
 
-                        <ToggleButton onClick={() => setReplayVal(changes.length)} value={false} className={classes.grouped}>
-                            <HistoryIcon className={classes.icons} />
-                        </ToggleButton>
-                    </ToggleButtonGroup>
+                            <ToggleButton onClick={() => setReplayVal(changes.length)} value={false} className={classes.grouped}>
+                                <HistoryIcon className={classes.icons} />
+                            </ToggleButton>
+                        </ToggleButtonGroup>
                     </Tooltip>
                 </div>
                 {(editMode) ? (
@@ -329,7 +360,7 @@ const DraftEditor = () => {
                             max={changes.length}
                             value={replayVal}
                             valueLabelDisplay="auto"
-                            valueLabelFormat={(x)=>(changes[x-1])? format(changes[x-1].t,'p \n MM/dd'): 'Begin'}
+                            valueLabelFormat={(x) => (changes[x - 1]) ? format(changes[x - 1].t, 'p \n MM/dd') : 'Begin'}
                             ValueLabelComponent={SliderLabel}
                             // marks={changes.map((ch,ind)=> ({value: format(ch.t,'MM/dd/yyyy')}))}
                             onChange={(e, val) => setReplayVal(val)}
