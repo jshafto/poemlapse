@@ -133,7 +133,6 @@ const DraftEditor = () => {
     const userId = useSelector(state => state.authentication.id)
     const storedTitle = useSelector(state => state.entities.drafts.activeDraft.title)
     const storedChanges = useSelector(state => state.entities.drafts.activeDraft.changes)
-    const storedBeginning = useSelector(state => state.entities.drafts.activeDraft.beginning)
     const dateCreated = useSelector(state => state.entities.drafts.activeDraft.date_created)
 
 
@@ -195,8 +194,8 @@ const DraftEditor = () => {
     const handleClickTitle = () => {
         setTitleField(storedTitle);
         setEditingTitle(true);
-
     }
+
     const submitNewTitle = (e) => {
         e.preventDefault()
         dispatch(updateDraft(draftId, titleField));
@@ -383,9 +382,7 @@ const DraftEditor = () => {
                             value={replayVal}
                             valueLabelDisplay="auto"
                             valueLabelFormat={labelFormatter}
-                            // valueLabelFormat={(x) => ( console.log(changes[x - 1]))}
                             ValueLabelComponent={SliderLabel}
-                            // marks={changes.map((ch,ind)=> ({value: format(ch.t,'MM/dd/yyyy')}))}
                             onChange={(e, val) => setReplayVal(val)}
                         />
                     </div>
