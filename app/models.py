@@ -15,6 +15,7 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(40), nullable=False, unique=True)
     email = db.Column(db.String(255), nullable=False, unique=True)
     hashed_password = db.Column(db.String(255), nullable=False)
+    bio = db.Column(db.String(1000))
 
     drafts = db.relationship('Draft', back_populates='user')
 
@@ -76,9 +77,9 @@ class Draft(db.Model):
     title = db.Column(db.String(150), nullable=False)
     changes = db.Column(db.Text)
     beginning = db.Column(db.String(280))
-    date_created = db.Column(db.DateTime, nullable=False,
+    date_created = db.Column(db.DateTime(timezone=True), nullable=False,
                              server_default=func.now())
-    date_updated = db.Column(db.DateTime, nullable=False,
+    date_updated = db.Column(db.DateTime(timezone=True), nullable=False,
                              server_default=func.now(), onupdate=func.now())
 
     user = db.relationship('User', back_populates='drafts')

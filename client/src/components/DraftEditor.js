@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
 import { format } from 'date-fns';
+import parseISO from 'date-fns/parseISO'
 
 import { makeStyles } from '@material-ui/styles';
 import Paper from '@material-ui/core/Paper';
@@ -133,9 +134,11 @@ const DraftEditor = () => {
     const storedTitle = useSelector(state => state.entities.drafts.activeDraft.title)
     const storedChanges = useSelector(state => state.entities.drafts.activeDraft.changes)
     const storedBeginning = useSelector(state => state.entities.drafts.activeDraft.beginning)
+    const dateCreated = useSelector(state => state.entities.drafts.activeDraft.date_created)
+
 
     const [titleField, setTitleField] = useState(storedTitle || "")
-    const [changes, setChanges] = useState([]);
+    const [changes, setChanges] = useState([{inserted:"", front:0, end:0, t:(new Date())}]);
     const [editingTitle, setEditingTitle] = useState(false);
     const [poemField, setPoemField] = useState("");
     const [textSize, setTextSize] = useState(2);
@@ -166,12 +169,26 @@ const DraftEditor = () => {
 
 
     useEffect(() => {
+        // when the database's version of the change history updates
+        // we want to load those changes into the current page
+        // however, if the user has made changes while the database was updating
+        // we don't want to overwrite those changes
+        // so we only need to load the changes from the database if that history
+        // is longer than the current history (e.g. when the poem first loads)
+        // if the user's history is more up-to date, we don't want to replace
+        // that
+        // there may ultimately be a solution less likely to lead to loss of data
+        // somehow (what if a user managed to arrive at a page for a document
+        // they've already worked on, and then make more changes than
+        // they'd previously had and it overwrite the previously existing history??
+        // but let's stick with this for now.
         if (storedChanges) {
             const parsedChanges = JSON.parse(storedChanges);
-            setChanges(parsedChanges)
-            if (poemField==="") {
+            if (parsedChanges.length > changes.length) {
+                setChanges(parsedChanges)
                 setPoemField(reconstruct("", parsedChanges, parsedChanges.length))
             }
+
         }
     }, [storedChanges])
 
@@ -217,20 +234,25 @@ const DraftEditor = () => {
         setFontMenuAnchor(null);
         setEditorFont(index);
     }
-    const saveChanges = () => {
-        const beginning = poemField.slice(0,280)
-        dispatch(updateDraft(draftId, null, JSON.stringify(changes), beginning))
+    const saveChanges = (changeList, value) => {
+        const beginning = value.slice(0,280);
+        dispatch(updateDraft(draftId, null, JSON.stringify(changeList), beginning))
     }
 
     const handleUpdate = (e) => {
+        const currentValue = e.target.value;
+        const lastChange = compareStrings(poemField, e.target.value);
+        const newChanges = [...changes, lastChange];
         clearTimeout(saveTimeout);
-        setChanges([...changes, compareStrings(poemField, e.target.value)]);
-        setPoemField(e.target.value);
-        const timeout = setTimeout(saveChanges, 3000);
+        setChanges(newChanges);
+        setPoemField(currentValue);
+        const timeout = setTimeout(saveChanges, 3000, newChanges, currentValue);
         setSaveTimeout(timeout);
     }
 
-
+    const labelFormatter = (x) => {
+        return (changes[x - 1]) ? format(new Date(changes[x - 1].t), 'p \n MM/dd') : format(new Date(dateCreated), 'p \n MM/dd');
+    }
 
     return (
         <Container maxWidth="md">
@@ -360,7 +382,8 @@ const DraftEditor = () => {
                             max={changes.length}
                             value={replayVal}
                             valueLabelDisplay="auto"
-                            valueLabelFormat={(x) => (changes[x - 1]) ? format(changes[x - 1].t, 'p \n MM/dd') : 'Begin'}
+                            valueLabelFormat={labelFormatter}
+                            // valueLabelFormat={(x) => ( console.log(changes[x - 1]))}
                             ValueLabelComponent={SliderLabel}
                             // marks={changes.map((ch,ind)=> ({value: format(ch.t,'MM/dd/yyyy')}))}
                             onChange={(e, val) => setReplayVal(val)}

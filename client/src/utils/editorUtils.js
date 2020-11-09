@@ -20,9 +20,10 @@ export const compareStrings = (str, next) => {
 
     inserted = next.slice(front, next.length - end);
     const t = new Date();
+    console.log({ inserted, front, end, t })
     return { inserted, front, end, t }
 }
 
 export const reconstruct = (initial, changes, index) => {
-    return changes.slice(0, index).reduce((acc, val) => step(acc, val), initial)
+    return changes.slice(0, index+1).reduce((acc, val) => step(acc, val), initial)
 }
