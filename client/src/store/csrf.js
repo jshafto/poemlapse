@@ -1,6 +1,6 @@
 import { setUser } from './authentication'
 // constants
-export const SET_CSRF_TOKEN = '/poemlapse/csrf/SET_CSRF_TOKEN';
+export const SET_CSRF_TOKEN = 'poemlapse/csrf/SET_CSRF_TOKEN';
 
 
 // action creators

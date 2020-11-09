@@ -1,7 +1,7 @@
-import { authError } from './errors'
+import { authError, clearErrors } from './errors'
 // constants
-export const SET_USER = '/poemlapse/authentication/SET_USER';
-export const REMOVE_USER = '/poemlapse/authentication/REMOVE_USER';
+export const SET_USER = 'poemlapse/authentication/SET_USER';
+export const REMOVE_USER = 'poemlapse/authentication/REMOVE_USER';
 // action creators
 export const setUser = (user) => ({
     type: SET_USER,
@@ -28,6 +28,7 @@ export const login = (email, password) => async (dispatch, getState) => {
     const response = await fetch(`/api/session/login`, requestOptions);
     if (response.ok) {
         const data = await response.json();
+        dispatch(clearErrors());
         dispatch(setUser(data.current_user));
     } else {
         const data = await response.json();

@@ -4,6 +4,29 @@ from flask_login import current_user, login_required
 draft_routes = Blueprint('drafts', __name__)
 
 
+@draft_routes.route('')
+@login_required
+def get_drafts():
+    response = Draft.query.filter_by(user_id=current_user.id).all()
+    return {draft.id: draft.draft_info() for draft in response}
+
+
+@draft_routes.route('', methods=['POST'])
+@login_required
+def new_draft():
+    user_id = current_user.id
+    title = request.json.get('title', None)
+
+    try:
+        draft = Draft(user_id=user_id, title=title)
+        db.session.add(draft)
+        db.session.commit()
+    except AssertionError as exception_message:
+        return jsonify(msg=str(exception_message)), 400
+
+    return {"id": draft.id}
+
+
 @draft_routes.route('/<draft_id>', methods=['PUT'])
 @login_required
 def update_draft(draft_id):
@@ -16,12 +39,15 @@ def update_draft(draft_id):
         return {'msg': 'Draft not found'}, 404
     title = request.json.get('title', None)
     changes = request.json.get('changes', None)
+    beginning = request.json.get('beginning', None)
 
     try:
         if title and not draft.title == title:
             draft.title = title
         if changes:
             draft.changes = changes
+        if beginning:
+            draft.beginning = beginning
         db.session.commit()
     except AssertionError as exception_message:
         return jsonify(msg=str(exception_message)), 400
