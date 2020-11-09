@@ -15,6 +15,7 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(40), nullable=False, unique=True)
     email = db.Column(db.String(255), nullable=False, unique=True)
     hashed_password = db.Column(db.String(255), nullable=False)
+    bio = db.Column(db.String(1000))
 
     drafts = db.relationship('Draft', back_populates='user')
 
@@ -75,9 +76,10 @@ class Draft(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     title = db.Column(db.String(150), nullable=False)
     changes = db.Column(db.Text)
-    date_created = db.Column(db.DateTime, nullable=False,
+    beginning = db.Column(db.String(280))
+    date_created = db.Column(db.DateTime(timezone=True), nullable=False,
                              server_default=func.now())
-    date_updated = db.Column(db.DateTime, nullable=False,
+    date_updated = db.Column(db.DateTime(timezone=True), nullable=False,
                              server_default=func.now(), onupdate=func.now())
 
     user = db.relationship('User', back_populates='drafts')
@@ -89,6 +91,7 @@ class Draft(db.Model):
                 'user_id': self.user_id,
                 'title': self.title,
                 'changes': self.changes,
+                'beginning': self.beginning,
                 'date_created': self.date_created,
                 'date_updated': self.date_updated,
             }
@@ -106,6 +109,7 @@ class Draft(db.Model):
             'id': self.id,
             'user_id': self.user_id,
             'title': self.title,
+            'beginning': self.beginning,
             'date_created': self.date_created,
             'date_updated': self.date_updated,
         }
@@ -116,6 +120,7 @@ class Draft(db.Model):
             raise AssertionError('No title provided')
         if len(title) > 150:
             raise AssertionError('Title cannot be longer than 150 characters')
-        if (Draft.query.filter_by(user_id=self.user_id, title=title).first()):
-            raise AssertionError('You already have a poem with that title')
+        # if (Draft.query.filter_by(user_id=self.user_id,
+        #                           title=title).first()):
+        #     raise AssertionError('You already have a poem with that title')
         return title

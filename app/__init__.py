@@ -19,7 +19,7 @@ app.register_blueprint(user_routes, url_prefix='/api/users')
 app.register_blueprint(session_routes, url_prefix='/api/session')
 app.register_blueprint(draft_routes, url_prefix='/api/drafts')
 db.init_app(app)
-migrate = Migrate(app, db)
+migrate = Migrate(app, db, compare_type=True)
 login_manager = LoginManager(app)
 
 
