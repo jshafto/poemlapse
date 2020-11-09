@@ -250,7 +250,7 @@ const DraftEditor = () => {
     }
 
     const labelFormatter = (x) => {
-        return (changes[x - 1]) ? format(new Date(changes[x - 1].t), 'p \n MM/dd') : format(new Date(dateCreated), 'p \n MM/dd');
+        return (changes[x]) ? format(new Date(changes[x].t), 'p \n MM/dd') : '';
     }
 
     return (
@@ -378,7 +378,7 @@ const DraftEditor = () => {
                             // autoFocus // to do: get this to focus automatically
                             step={1}
                             min={0}
-                            max={changes.length}
+                            max={changes.length-1}
                             value={replayVal}
                             valueLabelDisplay="auto"
                             valueLabelFormat={labelFormatter}
