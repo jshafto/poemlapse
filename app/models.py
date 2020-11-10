@@ -18,6 +18,7 @@ class User(db.Model, UserMixin):
     bio = db.Column(db.String(1000))
 
     drafts = db.relationship('Draft', back_populates='user')
+    works = db.relationship('Work', back_populates='user')
 
     def to_dict(self):
         return {
@@ -83,6 +84,7 @@ class Draft(db.Model):
                              server_default=func.now(), onupdate=func.now())
 
     user = db.relationship('User', back_populates='drafts')
+    work = db.relationship('Work', back_populates='draft')
 
     def to_dict(self):
         if self.changes:
@@ -94,6 +96,7 @@ class Draft(db.Model):
                 'beginning': self.beginning,
                 'date_created': self.date_created,
                 'date_updated': self.date_updated,
+                'published': bool(self.work),
             }
         else:
             return {
@@ -102,6 +105,7 @@ class Draft(db.Model):
                 'title': self.title,
                 'date_created': self.date_created,
                 'date_updated': self.date_updated,
+                'published': bool(self.work),
             }
 
     def draft_info(self):
@@ -124,3 +128,56 @@ class Draft(db.Model):
         #                           title=title).first()):
         #     raise AssertionError('You already have a poem with that title')
         return title
+
+
+class Work(db.Model):
+    __tablename__ = "works"
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    draft_id = db.Column(
+        db.Integer, db.ForeignKey('drafts.id'), nullable=False)
+    title = db.Column(db.String(150), nullable=False)
+    changes = db.Column(db.Text)
+    beginning = db.Column(db.String(280))
+    date_created = db.Column(db.DateTime(timezone=True), nullable=False,
+                             server_default=func.now())
+    date_updated = db.Column(db.DateTime(timezone=True), nullable=False,
+                             server_default=func.now(), onupdate=func.now())
+    date_published = db.Column(db.DateTime(timezone=True), nullable=False,
+                               server_default=func.now())
+
+    draft = db.relationship('Draft', back_populates='work')
+    user = db.relationship('User', back_populates='works')
+
+    def work_info(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'draft_id': self.draft_id,
+            'title': self.title,
+            'beginning': self.beginning,
+            'date_created': self.date_created,
+            'date_updated': self.date_updated,
+            'date_published': self.date_published,
+        }
+
+    def to_dict(self):
+        if self.changes:
+            return {
+                'id': self.id,
+                'user_id': self.user_id,
+                'draft_id': self.draft_id,
+                'title': self.title,
+                'changes': self.changes,
+                'beginning': self.beginning,
+                'date_created': self.date_created,
+                'date_updated': self.date_updated,
+            }
+        else:
+            return {
+                'id': self.id,
+                'user_id': self.user_id,
+                'title': self.title,
+                'date_created': self.date_created,
+                'date_updated': self.date_updated,
+            }

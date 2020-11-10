@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
 import { format } from 'date-fns';
-import parseISO from 'date-fns/parseISO'
 
 import { makeStyles } from '@material-ui/styles';
 import Paper from '@material-ui/core/Paper';
@@ -53,6 +52,7 @@ const useStyles = makeStyles(theme => ({
         "&:focus": {
             outline: "none"
         },
+        lineHeight: 1.4,
     },
     replayContainer: {
         overflowY: "auto",
