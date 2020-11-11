@@ -106,4 +106,5 @@ def publish_draft(draft_id):
     except AssertionError as exception_message:
         return jsonify(msg=str(exception_message)), 400
 
-    return work.to_dict(), 200
+    # return work.to_dict(), 200
+    return {"id": work.id}
