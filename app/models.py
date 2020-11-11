@@ -116,6 +116,7 @@ class Draft(db.Model):
             'beginning': self.beginning,
             'date_created': self.date_created,
             'date_updated': self.date_updated,
+            'published': bool(self.work),
         }
 
     @validates('title')
@@ -162,22 +163,14 @@ class Work(db.Model):
         }
 
     def to_dict(self):
-        if self.changes:
-            return {
-                'id': self.id,
-                'user_id': self.user_id,
-                'draft_id': self.draft_id,
-                'title': self.title,
-                'changes': self.changes,
-                'beginning': self.beginning,
-                'date_created': self.date_created,
-                'date_updated': self.date_updated,
-            }
-        else:
-            return {
-                'id': self.id,
-                'user_id': self.user_id,
-                'title': self.title,
-                'date_created': self.date_created,
-                'date_updated': self.date_updated,
-            }
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'draft_id': self.draft_id,
+            'title': self.title,
+            'changes': self.changes,
+            'beginning': self.beginning,
+            'date_created': self.date_created,
+            'date_updated': self.date_updated,
+            'date_published': self.date_published,
+        }

@@ -83,3 +83,27 @@ def delete_draft(draft_id):
     db.session.delete(draft)
     db.session.commit()
     return {'msg': f'Deleted draft with id of {draft_id}.'}, 200
+
+
+@draft_routes.route('/<draft_id>/works', methods=['POST'])
+@login_required
+def publish_draft(draft_id):
+    draft_id = int(draft_id)
+    user_id = current_user.id
+
+    draft = Draft.query.get(draft_id)
+
+    if not draft or not user_id == draft.user_id:
+        return {'msg': 'Draft not found'}, 404
+
+    try:
+        work = Work(
+            title=draft.title, user_id=draft.user_id, draft_id=draft.id,
+            date_created=draft.date_created, date_updated=draft.date_updated,
+            changes=draft.changes, beginning=draft.beginning)
+        db.session.add(work)
+        db.session.commit()
+    except AssertionError as exception_message:
+        return jsonify(msg=str(exception_message)), 400
+
+    return work.to_dict(), 200
