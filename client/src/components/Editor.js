@@ -23,14 +23,15 @@ import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
 import TextFormatIcon from '@material-ui/icons/TextFormat';
 
-import SliderLabel from './SliderLabel'
+import SliderLabel from './SliderLabel';
+import { compareStrings, reconstruct } from '../utils/editorUtils';
 
 const useStyles = makeStyles(theme => ({
     title: {
         marginBottom: 15,
     },
     edit: {
-        height: 'calc(100vh - 150px)',
+        height: 'calc(100vh - 200px)',
         minHeight: 150,
         display: 'flex',
         justifyContent: 'space-between',
@@ -48,6 +49,7 @@ const useStyles = makeStyles(theme => ({
         "&:focus": {
             outline: "none"
         },
+        lineHeight: 1.4,
     },
     replayContainer: {
         overflowY: "auto",
@@ -113,48 +115,19 @@ const useStyles = makeStyles(theme => ({
 }))
 
 
-const step = (initial, change) => {
-    const endingIndex = initial.length - change.end
-    return initial.slice(0, change.front) + change.inserted + initial.slice(endingIndex)
-}
-
-const compareStrings = (str, next) => {
-    let inserted = "";
-    let front = 0;
-    let end = 0;
-    if (str === next) return { inserted, front, end: 0 }
-    while (str[front] === next[front] && front < str.length) {
-        front = front + 1;
-    }
-    // you could definitely do this just by shortening the while loop but okay
-    let choppedStr = str.slice(front)
-    let choppedNext = next.slice(front)
-    while (choppedStr[choppedStr.length - end - 1] === choppedNext[choppedNext.length - end - 1] && end < choppedStr.length) {
-        end = end + 1;
-    }
-
-    inserted = next.slice(front, next.length - end);
-    const t = new Date();
-    return { inserted, front, end, t }
-}
-
-const reconstruct = (initial, changes, index) => {
-    return changes.slice(0, index).reduce((acc, val) => step(acc, val), initial)
-}
-
 const fonts = [
-    {label: "default", val: `"Nunito Sans", "Futura", sans-serif`},
-    {label: "sans-serif", val: `"Helvetica", sans-serif`},
-    {label: "monospace", val: "monospace"},
-    {label: "serif", val: `'EB Garamond', serif`},
+    { label: "default", val: `"Nunito Sans", "Futura", sans-serif` },
+    { label: "sans-serif", val: `"Helvetica", sans-serif` },
+    { label: "monospace", val: "monospace" },
+    { label: "serif", val: `'EB Garamond', serif` },
 ]
 const textSizes = [".6rem", ".8rem", "1rem", "1.2rem", "1.4rem"];
 
 const Editor = () => {
     const classes = useStyles();
-    const [title, setTitle] = useState("poem")
+    // const [title, setTitle] = useState("poem")
     const [changes, setChanges] = useState([]);
-    const [editingTitle, setEditingTitle] = useState(false);
+    // const [editingTitle, setEditingTitle] = useState(false);
     const [poemField, setPoemField] = useState("");
     const [textSize, setTextSize] = useState(2);
     const [replayVal, setReplayVal] = useState(changes.length);
@@ -211,10 +184,22 @@ const Editor = () => {
         }
     }, [replayVal, playingInterval])
 
+    const labelFormatter = (x) => {
+        return (changes[x]) ? format(new Date(changes[x].t), 'p \n MM/dd') : '';
+    }
+
 
     return (
         <Container maxWidth="md">
-            {(editingTitle) ? (
+            <Typography variant="h5" gutterBottom>
+                Editor
+            </Typography>
+            <Typography variant="body1" color="textSecondary" gutterBottom>
+                Try out the poemlapse editor, and replay your writing process.
+                For a more in-depth demo of our features, or to save what you are working on,
+                you can log in as a demo user here.
+            </Typography>
+            {/* {(editingTitle) ? (
                 <ClickAwayListener onClickAway={() => setEditingTitle(false)}>
                     <TextField
                         className={classes.title}
@@ -230,69 +215,69 @@ const Editor = () => {
                         onClick={() => setEditingTitle(true)}>
                         {title}
                     </Typography>
-                )}
+                )} */}
             <Paper className={classes.edit} variant="outlined" >
                 <div className={classes.editorButtons}>
-                <Tooltip title="Decrease Font Size">
-                    <IconButton
-                        className={classes.fontSizeIcons}
-                        size="small"
-                        onClick={() => setTextSize(textSize - 1)}
-                        disabled={textSize <= 0}>
-                        <RemoveIcon />
-                    </IconButton>
+                    <Tooltip title="Decrease Font Size">
+                        <IconButton
+                            className={classes.fontSizeIcons}
+                            size="small"
+                            onClick={() => setTextSize(textSize - 1)}
+                            disabled={textSize <= 0}>
+                            <RemoveIcon />
+                        </IconButton>
                     </Tooltip>
                     <Tooltip title="Increase Font Size">
-                    <IconButton
-                        className={classes.fontSizeIcons}
-                        size="small"
-                        onClick={() => setTextSize(textSize + 1)}
-                        disabled={textSize >= textSizes.length - 1}>
-                        <AddIcon />
-                    </IconButton>
+                        <IconButton
+                            className={classes.fontSizeIcons}
+                            size="small"
+                            onClick={() => setTextSize(textSize + 1)}
+                            disabled={textSize >= textSizes.length - 1}>
+                            <AddIcon />
+                        </IconButton>
                     </Tooltip>
                     <Tooltip title="Font...">
-                    <IconButton
-                        className={classes.fontSizeIcons}
-                        size="small"
-                        onClick={(e)=>setFontMenuAnchor(e.currentTarget)}>
-                        <TextFormatIcon />
-                    </IconButton>
+                        <IconButton
+                            className={classes.fontSizeIcons}
+                            size="small"
+                            onClick={(e) => setFontMenuAnchor(e.currentTarget)}>
+                            <TextFormatIcon />
+                        </IconButton>
                     </Tooltip>
                     <Menu
-                        MenuListProps={{className: classes.menu}}
+                        MenuListProps={{ className: classes.menu }}
                         elevation={0}
                         anchorEl={fontMenuAnchor}
                         open={Boolean(fontMenuAnchor)}
-                        onClose= {()=>setFontMenuAnchor(null)}
+                        onClose={() => setFontMenuAnchor(null)}
                     >
-                        {fonts.map((font, ind)=>(
+                        {fonts.map((font, ind) => (
                             <MenuItem
                                 // classes={{selected: classes.selected, root: classes.menuItemRoot}}
                                 key={ind}
-                                selected={ind===editorFont}
-                                onClick={()=>updateFont(ind)}>
+                                selected={ind === editorFont}
+                                onClick={() => updateFont(ind)}>
                                 {font.label}
                             </MenuItem>
                         ))}
                     </Menu>
                     <Tooltip title="Edit/Replay">
-                    <ToggleButtonGroup
-                        size="small"
-                        value={editMode}
-                        exclusive
-                        onChange={updateEditMode}
-                        className={classes.buttonGroup}
-                    >
+                        <ToggleButtonGroup
+                            size="small"
+                            value={editMode}
+                            exclusive
+                            onChange={updateEditMode}
+                            className={classes.buttonGroup}
+                        >
 
-                        <ToggleButton value={true} className={classes.grouped}>
-                            <EditIcon className={classes.icons} />
-                        </ToggleButton>
+                            <ToggleButton value={true} className={classes.grouped}>
+                                <EditIcon className={classes.icons} />
+                            </ToggleButton>
 
-                        <ToggleButton onClick={() => setReplayVal(changes.length)} value={false} className={classes.grouped}>
-                            <HistoryIcon className={classes.icons} />
-                        </ToggleButton>
-                    </ToggleButtonGroup>
+                            <ToggleButton onClick={() => setReplayVal(changes.length)} value={false} className={classes.grouped}>
+                                <HistoryIcon className={classes.icons} />
+                            </ToggleButton>
+                        </ToggleButtonGroup>
                     </Tooltip>
                 </div>
                 {(editMode) ? (
@@ -337,9 +322,8 @@ const Editor = () => {
                             max={changes.length}
                             value={replayVal}
                             valueLabelDisplay="auto"
-                            valueLabelFormat={(x)=>(changes[x-1])? format(changes[x-1].t,'p \n MM/dd'): 'Begin'}
+                            valueLabelFormat={labelFormatter}
                             ValueLabelComponent={SliderLabel}
-                            // marks={changes.map((ch,ind)=> ({value: format(ch.t,'MM/dd/yyyy')}))}
                             onChange={(e, val) => setReplayVal(val)}
                         />
                     </div>

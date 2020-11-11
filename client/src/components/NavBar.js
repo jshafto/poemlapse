@@ -49,7 +49,7 @@ const NavBar = () => {
                     PoemLapse
                 </Button>
                 <div className={classes.others}>
-                    <Button component={NavLink} to='/editor' className={classes.button}>Editor</Button>
+                    <Button component={NavLink} to='/editor' className={classes.button}>Demo</Button>
                     {(loggedOut) ? (
 
                         <Button component={NavLink} to="/login" className={classes.button}>Login</Button>
