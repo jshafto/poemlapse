@@ -22,7 +22,7 @@ export const clearWorks = () => ({
     type: CLEAR_WORKS
 })
 export const clearActiveWork = () => ({
-    type: CLEAR_ACTIVE_WORK
+    type: CLEAR_ONE_WORK
 })
 export const fetchingWork = (workId) => ({
     type: FETCHING_WORK,
@@ -33,6 +33,17 @@ export const fetchingWork = (workId) => ({
 // thunks
 export const getWorks = () => async (dispatch) => {
     const res = await fetch(`/api/works`);
+    if (res.ok) {
+        const works = await res.json();
+        dispatch(loadWorks(works))
+    } else {
+        const error = await res.json();
+        dispatch(loadingError(error.msg))
+    }
+}
+
+export const getOwnWorks = () => async (dispatch) => {
+    const res = await fetch(`/api/users/me/works`);
     if (res.ok) {
         const works = await res.json();
         dispatch(loadWorks(works))

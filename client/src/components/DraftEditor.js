@@ -24,10 +24,12 @@ import PauseIcon from '@material-ui/icons/Pause';
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
 import TextFormatIcon from '@material-ui/icons/TextFormat';
+import PublishIcon from '@material-ui/icons/Publish';
 
 import SliderLabel from './SliderLabel';
 import { compareStrings, reconstruct } from '../utils/editorUtils';
 import { getActiveDraft, clearActiveDraft, updateDraft } from '../store/drafts';
+import { publishWork } from '../store/works'
 
 const useStyles = makeStyles(theme => ({
     title: {
@@ -253,6 +255,10 @@ const DraftEditor = () => {
         return (changes[x]) ? format(new Date(changes[x].t), 'p \n MM/dd') : '';
     }
 
+    const handlePublish = () => {
+        dispatch(publishWork(draftId))
+    }
+
     return (
         <Container maxWidth="md">
             {(editingTitle) ? (
@@ -277,6 +283,15 @@ const DraftEditor = () => {
                 )}
             <Paper className={classes.edit} variant="outlined" >
                 <div className={classes.editorButtons}>
+                    <Tooltip title="Publish">
+                        <IconButton
+                            className={classes.fontSizeIcons}
+                            size="small"
+                            onClick={handlePublish}
+                            disabled={changes.length<=1}>
+                            <PublishIcon />
+                        </IconButton>
+                    </Tooltip>
                     <Tooltip title="Decrease Font Size">
                         <IconButton
                             className={classes.fontSizeIcons}
