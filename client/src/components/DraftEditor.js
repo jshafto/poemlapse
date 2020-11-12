@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 
 import { format } from 'date-fns';
 
@@ -24,10 +24,12 @@ import PauseIcon from '@material-ui/icons/Pause';
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
 import TextFormatIcon from '@material-ui/icons/TextFormat';
+import PublishIcon from '@material-ui/icons/Publish';
 
 import SliderLabel from './SliderLabel';
 import { compareStrings, reconstruct } from '../utils/editorUtils';
 import { getActiveDraft, clearActiveDraft, updateDraft } from '../store/drafts';
+import { publishWork } from '../store/works'
 
 const useStyles = makeStyles(theme => ({
     title: {
@@ -129,11 +131,15 @@ const textSizes = [".6rem", ".8rem", "1rem", "1.2rem", "1.4rem"];
 
 const DraftEditor = () => {
     const classes = useStyles();
+    const history = useHistory();
+    const dispatch = useDispatch();
+    const { draftId } = useParams();
 
-    const userId = useSelector(state => state.authentication.id)
-    const storedTitle = useSelector(state => state.entities.drafts.activeDraft.title)
-    const storedChanges = useSelector(state => state.entities.drafts.activeDraft.changes)
-    const dateCreated = useSelector(state => state.entities.drafts.activeDraft.date_created)
+    const userId = useSelector(state => state.authentication.id);
+    const storedTitle = useSelector(state => state.entities.drafts.activeDraft.title);
+    const storedChanges = useSelector(state => state.entities.drafts.activeDraft.changes);
+    const dateCreated = useSelector(state => state.entities.drafts.activeDraft.date_created);
+    const fetchingPublishId = useSelector(state => state.entities.works.fetching);
 
 
     const [titleField, setTitleField] = useState(storedTitle || "")
@@ -149,9 +155,12 @@ const DraftEditor = () => {
     const [fontMenuAnchor, setFontMenuAnchor] = useState(null);
     const [saveTimeout, setSaveTimeout] = useState(null)
 
-    const { draftId } = useParams();
-    const dispatch = useDispatch();
 
+    useEffect(() => {
+        if (fetchingPublishId) {
+            history.push(`/works/${fetchingPublishId}`)
+        }
+    }, [fetchingPublishId])
 
 
     useEffect(() => {
@@ -253,6 +262,10 @@ const DraftEditor = () => {
         return (changes[x]) ? format(new Date(changes[x].t), 'p \n MM/dd') : '';
     }
 
+    const handlePublish = () => {
+        dispatch(publishWork(draftId))
+    }
+
     return (
         <Container maxWidth="md">
             {(editingTitle) ? (
@@ -277,6 +290,15 @@ const DraftEditor = () => {
                 )}
             <Paper className={classes.edit} variant="outlined" >
                 <div className={classes.editorButtons}>
+                    <Tooltip title="Publish">
+                        <IconButton
+                            className={classes.fontSizeIcons}
+                            size="small"
+                            onClick={handlePublish}
+                            disabled={changes.length<=1}>
+                            <PublishIcon />
+                        </IconButton>
+                    </Tooltip>
                     <Tooltip title="Decrease Font Size">
                         <IconButton
                             className={classes.fontSizeIcons}
