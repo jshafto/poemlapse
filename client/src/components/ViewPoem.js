@@ -123,7 +123,7 @@ const ViewPoem = () => {
     const title = useSelector(state => state.entities.works.activeWork.title);
     const author = useSelector(state => state.entities.works.activeWork.displayName);
     const changes = useSelector(state => state.entities.works.activeWork.changes);
-    const authorId = useSelector(state => state.entities.works.activeWork.authorId);
+    const authorId = useSelector(state => state.entities.works.activeWork.userId);
 
     const [playing, setPlaying] = useState(false);
     const [playingInterval, setPlayingInterval] = useState(null);
@@ -150,6 +150,7 @@ const ViewPoem = () => {
     }, [replayVal, playingInterval]);
 
     const handleClickPlay = () => {
+        if (!changes) return;
         clearInterval(playingInterval)
         setPlaying(true);
         if (replayVal >= changes.length) {
