@@ -153,8 +153,7 @@ const DraftList = () => {
                         key={draft.id}
                         hover
                         onClick={goToDraft(draft.id)}
-                        style={{ borderRadius: 32 }}
-                        style={{ cursor: 'pointer' }}
+                        style={{ borderRadius: 32, cursor: 'pointer' }}
                     >
                         <TableCell style={{ borderBottom: 0 }}>{draft.title}</TableCell>
                         <TableCell style={{ borderBottom: 0 }}>{format(new Date(draft.date_created), 'MMM d, yyyy')}</TableCell>
