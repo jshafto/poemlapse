@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from app.models import db, User, Draft
+from app.models import db, User, Draft, Work
 from flask_login import current_user, login_required
 draft_routes = Blueprint('drafts', __name__)
 

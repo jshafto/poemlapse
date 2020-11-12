@@ -15,6 +15,7 @@ def get_work(work_id):
     work_id = int(work_id)
 
     work = Work.query.get(work_id)
+    print(work_id, 'hi')
 
     if not work:
         return {'msg': 'Poem not found'}, 404
@@ -33,6 +34,9 @@ def unpublish_work(work_id):
     if not work or not user_id == work.user_id:
         return {'msg': 'Work not found'}, 404
 
+    draft_id = work.draft_id
+
     db.session.delete(work)
     db.session.commit()
-    return {'msg': f'Undid publication of work with id of {work_id}.'}, 200
+    # return {'msg': f'Undid publication of work with id of {work_id}.'}, 200
+    return {"id": draft_id}, 200

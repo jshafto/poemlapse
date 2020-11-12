@@ -50,9 +50,11 @@ const NavBar = () => {
                 </Button>
                 <div className={classes.others}>
                     <Button component={NavLink} to='/editor' className={classes.button}>Demo</Button>
+                    {(loggedOut) ? (<Button component={NavLink} to="/signup" className={classes.button}>Join</Button>
+                    ) : (null)}
                     {(loggedOut) ? (
 
-                        <Button component={NavLink} to="/login" className={classes.button}>Login</Button>
+                        <Button component={NavLink} to="/signin" className={classes.button}>Sign In</Button>
                     ) : (
                             <Button className={classes.button} onClick={handleLogout}>Logout</Button>
                         )

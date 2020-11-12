@@ -24,7 +24,9 @@ export const themeObj = {
         action: {
             selected: '#FFA4B9',
             hover: '#FFDDE1',
-        }
+        },secondary: {
+            main: "#FFA4B9",
+        },
 
     },
     overrides: {

@@ -17,12 +17,14 @@ RUN ["npm", "run", "build", "--prefix", "client"]
 # our host machine.
 RUN ["cp", "-r", "client/build", "app/static"]
 RUN ["cp", "-r", "app/static/static/js", "app/static"]
-RUN ["cp", "-r", "app/static/static/css", "app/static"]
+# RUN ["cp", "-r", "app/static/static/css", "app/static"]
+# RUN ["cp", "-r", "app/static/static/media", "app/static"]
 
 # Setup Flask environment
 ENV FLASK_APP=app
 ENV FLASK_ENV=production
 ENV SQLALCHEMY_ECHO=True
+ENV REACT_APP_BASE_URL=https://poemlapse.herokuapp.com
 
 EXPOSE 8000
 

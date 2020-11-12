@@ -7,10 +7,12 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 
 import UserList from './components/UsersList';
 import LoginForm from './components/LoginForm';
+import SignUp from './components/SignUp'
 import NavBar from './components/NavBar';
 import Editor from './components/Editor';
 import DraftEditor from './components/DraftEditor';
-import LandingOrDashboard from './components/LandingOrDashboard'
+import LandingOrDashboard from './components/LandingOrDashboard';
+import ViewPoem from './components/ViewPoem';
 import { restoreCSRF } from './store/csrf';
 import { themeObj } from './theme'
 import { ProtectedRoute, AuthRoute } from './Routes';
@@ -39,11 +41,15 @@ function App() {
                     <Route exact path="/editor" >
                         <Editor />
                     </Route>
-                    <Route path="/drafts/:draftId" >
+                    <Route exact path="/drafts/:draftId" >
                         <DraftEditor />
                     </Route>
-                    <AuthRoute path="/login" component={LoginForm} />
-                    <Route path="/">
+                    <Route exact path="/works/:workId" >
+                        <ViewPoem />
+                    </Route>
+                    <AuthRoute exact path="/signin" component={LoginForm} />
+                    <AuthRoute exact path="/signup" component={SignUp} />
+                    <Route exact path="/">
                         <LandingOrDashboard />
                     </Route>
                 </Switch>
