@@ -25,5 +25,10 @@ export const compareStrings = (str, next) => {
 }
 
 export const reconstruct = (initial, changes, index) => {
-    return changes.slice(0, index+1).reduce((acc, val) => step(acc, val), initial)
+    if (changes) {
+        return changes.slice(0, index+1).reduce((acc, val) => step(acc, val), initial)
+    }
+    else {
+        return "";
+    }
 }

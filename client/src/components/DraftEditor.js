@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 
 import { format } from 'date-fns';
 
@@ -131,11 +131,15 @@ const textSizes = [".6rem", ".8rem", "1rem", "1.2rem", "1.4rem"];
 
 const DraftEditor = () => {
     const classes = useStyles();
+    const history = useHistory();
+    const dispatch = useDispatch();
+    const { draftId } = useParams();
 
-    const userId = useSelector(state => state.authentication.id)
-    const storedTitle = useSelector(state => state.entities.drafts.activeDraft.title)
-    const storedChanges = useSelector(state => state.entities.drafts.activeDraft.changes)
-    const dateCreated = useSelector(state => state.entities.drafts.activeDraft.date_created)
+    const userId = useSelector(state => state.authentication.id);
+    const storedTitle = useSelector(state => state.entities.drafts.activeDraft.title);
+    const storedChanges = useSelector(state => state.entities.drafts.activeDraft.changes);
+    const dateCreated = useSelector(state => state.entities.drafts.activeDraft.date_created);
+    const fetchingPublishId = useSelector(state => state.entities.works.fetching);
 
 
     const [titleField, setTitleField] = useState(storedTitle || "")
@@ -151,9 +155,12 @@ const DraftEditor = () => {
     const [fontMenuAnchor, setFontMenuAnchor] = useState(null);
     const [saveTimeout, setSaveTimeout] = useState(null)
 
-    const { draftId } = useParams();
-    const dispatch = useDispatch();
 
+    useEffect(() => {
+        if (fetchingPublishId) {
+            history.push(`/works/${fetchingPublishId}`)
+        }
+    }, [fetchingPublishId])
 
 
     useEffect(() => {

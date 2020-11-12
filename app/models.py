@@ -16,6 +16,8 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(255), nullable=False, unique=True)
     hashed_password = db.Column(db.String(255), nullable=False)
     bio = db.Column(db.String(1000))
+    first_name = db.Column(db.String(100))
+    last_name = db.Column(db.String(100))
 
     drafts = db.relationship('Draft', back_populates='user')
     works = db.relationship('Work', back_populates='user')
@@ -24,8 +26,33 @@ class User(db.Model, UserMixin):
         return {
             'id': self.id,
             'username': self.username,
-            'email': self.email
+            'email': self.email,
+            'bio': self.bio,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
         }
+
+    @property
+    def first(self):
+        return self.first_name
+    @property
+    def last(self):
+        return self.last_name
+    @property
+    def display_name(self):
+        if self.first_name and self.last_name:
+            return f'{self.first_name} {self.last_name}'
+        if not self.first_name and not self.last_name:
+            return self.username
+        if not self.first_name:
+            return self.last_name
+        if not self.last_name:
+            return self.first_name
+
+    @property
+    def author_id(self):
+        return self.id
+
 
     @property
     def password(self):
@@ -153,24 +180,30 @@ class Work(db.Model):
     def work_info(self):
         return {
             'id': self.id,
-            'user_id': self.user_id,
-            'draft_id': self.draft_id,
+            'userId': self.user_id,
+            'draftId': self.draft_id,
             'title': self.title,
             'beginning': self.beginning,
-            'date_created': self.date_created,
-            'date_updated': self.date_updated,
-            'date_published': self.date_published,
+            'dateCreated': self.date_created,
+            'dateUpdated': self.date_updated,
+            'datePublished': self.date_published,
+            'displayName': self.user.display_name,
+            'firstName': self.user.first,
+            'lastName': self.user.last,
         }
 
     def to_dict(self):
         return {
             'id': self.id,
-            'user_id': self.user_id,
-            'draft_id': self.draft_id,
+            'userId': self.user_id,
+            'draftId': self.draft_id,
             'title': self.title,
             'changes': self.changes,
             'beginning': self.beginning,
-            'date_created': self.date_created,
-            'date_updated': self.date_updated,
-            'date_published': self.date_published,
+            'dateCreated': self.date_created,
+            'dateUpdated': self.date_updated,
+            'datePublished': self.date_published,
+            'displayName': self.user.display_name,
+            'firstName': self.user.first,
+            'lastName': self.user.last,
         }

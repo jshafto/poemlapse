@@ -15,6 +15,7 @@ def get_work(work_id):
     work_id = int(work_id)
 
     work = Work.query.get(work_id)
+    print(work_id, 'hi')
 
     if not work:
         return {'msg': 'Poem not found'}, 404
