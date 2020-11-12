@@ -57,10 +57,12 @@ export const getOneWork = (workId) => async (dispatch) => {
     const res = await fetch(`/api/works/${workId}`);
     if (res.ok) {
         const work = await res.json();
+        if (work.changes) {
+            work.changes = JSON.parse(work.changes)
+        }
         dispatch(loadOneWork(work))
     } else {
         const error = await res.json();
-        console.log(error.msg)
         dispatch(loadingError(error.msg))
     }
 }
