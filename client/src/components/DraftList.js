@@ -12,7 +12,13 @@ import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import TableBody from '@material-ui/core/TableBody';
-import DeleteIcon from '@material-ui/icons/Delete'
+import DeleteIcon from '@material-ui/icons/Delete';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Button from '@material-ui/core/Button';
 
 
 import { deleteDraft, getDrafts } from '../store/drafts'
@@ -21,9 +27,11 @@ const DraftList = () => {
     const dispatch = useDispatch();
     const history = useHistory();
     const fetchingDraftId = useSelector(state => state.entities.drafts.fetching)
-    const drafts = useSelector(state => Object.values(state.entities.drafts.byId));
+    const drafts = useSelector(state => Object.values(state.entities.drafts.byId).filter(draft=> !draft.published));
     const [order, setOrder] = useState('asc');
     const [orderBy, setOrderBy] = useState('title');
+    const [deleteOpen, setDeleteOpen] = useState(false);
+    const [deletingPoem, setDeletingPoem] = useState(null);
 
     useEffect(() => {
         if (fetchingDraftId) {
@@ -43,9 +51,21 @@ const DraftList = () => {
         history.push(`/drafts/${id}`);
     };
 
-    const handleDraftDelete = (id) => (e) => {
-        e.stopPropagation();
+    const handleDelete = (id) => () => {
         dispatch(deleteDraft(id));
+        setDeleteOpen(false);
+        setDeletingPoem(null);
+    }
+    const handleDraftDeleteOpen = (id, title) => (e) => {
+        e.stopPropagation();
+        // dispatch(deleteDraft(id));
+        setDeleteOpen(true);
+        setDeletingPoem({id, title});
+    }
+
+    const handleCloseDelete = () => {
+        setDeletingPoem(null);
+        setDeleteOpen(false);
     }
 
     const compareDraftList = (order, col) => (a, b) => {
@@ -65,9 +85,37 @@ const DraftList = () => {
         }
     }
 
+
     return (
         <Table size="small" >
             <TableHead>
+                {(deletingPoem) ? (
+                <Dialog open={deleteOpen} onClose={handleCloseDelete}>
+                    <DialogTitle>{`Are you sure you would like to delete "${deletingPoem.title}"?`}</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            {`If you proceed, draft of "${deletingPoem.title}" and all edit history will be permanently deleted. This action cannot be undone.`}
+                        </DialogContentText>
+                        <DialogActions>
+                            <Button
+                                elevation={0}
+                                onClick={handleCloseDelete}
+                                variant="outlined"
+                                >
+                                Cancel
+                            </Button>
+                            <Button
+                                onClick={handleDelete(deletingPoem.id)}
+                                variant='contained'
+                                color='primary'
+                                >
+                                Delete draft
+                            </Button>
+
+                        </DialogActions>
+                    </DialogContent>
+                </Dialog>
+                ) : (null)}
                 <TableRow>
                     <TableCell>
                         <TableSortLabel
@@ -115,7 +163,7 @@ const DraftList = () => {
                             <Tooltip title="Delete draft">
                                 <IconButton
                                     size="small"
-                                    onClick={handleDraftDelete(draft.id)}>
+                                    onClick={handleDraftDeleteOpen(draft.id, draft.title)}>
                                     <DeleteIcon />
                                 </IconButton>
                             </Tooltip>
