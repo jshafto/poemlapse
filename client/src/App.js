@@ -7,6 +7,7 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 
 import UserList from './components/UsersList';
 import LoginForm from './components/LoginForm';
+import SignUp from './components/SignUp'
 import NavBar from './components/NavBar';
 import Editor from './components/Editor';
 import DraftEditor from './components/DraftEditor';
@@ -42,7 +43,8 @@ function App() {
                     <Route path="/drafts/:draftId" >
                         <DraftEditor />
                     </Route>
-                    <AuthRoute path="/login" component={LoginForm} />
+                    <AuthRoute path="/signin" component={LoginForm} />
+                    <AuthRoute path="/signup" component={SignUp} />
                     <Route path="/">
                         <LandingOrDashboard />
                     </Route>
