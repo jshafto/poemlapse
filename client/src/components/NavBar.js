@@ -6,13 +6,18 @@ import { makeStyles } from '@material-ui/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button'
 import Toolbar from '@material-ui/core/Toolbar';
+import IconButton from '@material-ui/core/IconButton';
+import Hidden from '@material-ui/core/Hidden'
+import Logo from './Logo';
 
+import fullLogo from '../images/full_logo.png'
 import { logout } from '../store/authentication';
 
 
 const useStyles = makeStyles(theme => ({
     bar: {
         justifyContent: 'space-between',
+        minHeight:64,
     },
     button: {
         fontSize: '1.2rem',
@@ -24,7 +29,14 @@ const useStyles = makeStyles(theme => ({
             fontStyle: 'italic', //possibly not so great, but matches original
         }
     },
-
+    logo: {
+        backgroundImage: `url(${fullLogo})`,
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'contain',
+        width: 90,
+        height: 48,
+        borderRadius: 16,
+    },
     others: {
         display: 'flex',
     }
@@ -45,9 +57,15 @@ const NavBar = () => {
             elevation={0}
             position='static' >
             <Toolbar className={classes.bar}>
-                <Button className={classes.button} component={NavLink} to="/">
-                    PoemLapse
-                </Button>
+                <Hidden xsDown>
+                    <NavLink to="/" className={classes.logo} />
+                </Hidden>
+                <Hidden smUp>
+                <IconButton>
+                    <Logo />
+                </IconButton>
+                </Hidden>
+
                 <div className={classes.others}>
                     <Button component={NavLink} to='/editor' className={classes.button}>Demo</Button>
                     {(loggedOut) ? (<Button component={NavLink} to="/signup" className={classes.button}>Join</Button>
