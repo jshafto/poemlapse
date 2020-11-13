@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { makeStyles } from '@material-ui/styles';
@@ -45,11 +45,16 @@ const useStyles = makeStyles(theme => ({
 
 const NavBar = () => {
     const classes = useStyles();
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
+    const location = useLocation();
 
     const loggedOut = useSelector(state => !state.authentication.id)
 
     const handleLogout = () => dispatch(logout())
+
+    if (location.pathname === "/" && loggedOut) {
+        return null;
+    }
 
     return (
         <AppBar
