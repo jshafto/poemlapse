@@ -66,7 +66,7 @@ const NavBar = () => {
                     <NavLink to="/" className={classes.logo} />
                 </Hidden>
                 <Hidden smUp>
-                <IconButton>
+                <IconButton component={NavLink} to="/" >
                     <Logo />
                 </IconButton>
                 </Hidden>
