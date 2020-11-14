@@ -13,6 +13,7 @@ import Editor from './components/Editor';
 import DraftEditor from './components/DraftEditor';
 import LandingOrDashboard from './components/LandingOrDashboard';
 import ViewPoem from './components/ViewPoem';
+import PoemBrowser from './components/PoemBrowser'
 import Footer from './components/Footer';
 import { restoreCSRF } from './store/csrf';
 import { themeObj } from './theme'
@@ -56,6 +57,9 @@ function App() {
                         </Route>
                         <AuthRoute exact path="/signin" component={LoginForm} />
                         <AuthRoute exact path="/signup" component={SignUp} />
+                        <Route exact path="/browse">
+                            <PoemBrowser />
+                        </Route>
                         <Route exact path="/">
                             <LandingOrDashboard />
                         </Route>
