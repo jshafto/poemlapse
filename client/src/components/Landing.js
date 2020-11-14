@@ -181,7 +181,7 @@ const Landing = () => {
                 <Typography variant='h6'>
                     Using PoemLapse, you can write poems and replay your process in the editor.
                     Work on drafts, and publish them for your followers to view.
-                    Follow other poets and browse recent works.
+                    Browse recent works, and save your favorites.
                 </Typography>
                 <Typography color='secondary' variant='h3' align='center' gutterBottom>
                     ...
