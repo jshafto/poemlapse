@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { makeStyles } from '@material-ui/styles';
@@ -15,6 +15,9 @@ import { logout } from '../store/authentication';
 
 
 const useStyles = makeStyles(theme => ({
+    app: {
+        backgroundColor: theme.palette.background.default,
+    },
     bar: {
         justifyContent: 'space-between',
         minHeight:64,
@@ -47,11 +50,17 @@ const NavBar = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
     const location = useLocation();
+    const history = useHistory();
+    const pos = location.pathname === '/browse' ? 'sticky' : 'static';
+    const elev = location.pathname === '/browse' ? 1 : 0;
+
 
     const loggedOut = useSelector(state => !state.authentication.id)
 
-    const handleLogout = () => dispatch(logout())
-
+    const handleLogout = () => {
+        dispatch(logout());
+        history.push('/')
+    }
     if (location.pathname === "/" && loggedOut) {
         return null;
     }
@@ -59,8 +68,9 @@ const NavBar = () => {
     return (
         <AppBar
             color='transparent'
-            elevation={0}
-            position='static' >
+            elevation={elev}
+            position={pos}
+            className={classes.app}>
             <Toolbar className={classes.bar}>
                 <Hidden xsDown>
                     <NavLink to="/" className={classes.logo} />
@@ -73,6 +83,7 @@ const NavBar = () => {
 
                 <div className={classes.others}>
                     <Button component={NavLink} to='/editor' className={classes.button}>Demo</Button>
+                    <Button component={NavLink} to='/browse' className={classes.button}>Browse</Button>
                     {(loggedOut) ? (<Button component={NavLink} to="/signup" className={classes.button}>Join</Button>
                     ) : (null)}
                     {(loggedOut) ? (
