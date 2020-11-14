@@ -16,6 +16,8 @@ import PlayArrowRoundedIcon from '@material-ui/icons/PlayArrowRounded';
 import PauseIcon from '@material-ui/icons/Pause';
 import Grid from '@material-ui/core/Grid';
 import Link from '@material-ui/core/Link';
+import BookmarkIcon from '@material-ui/icons/Bookmark';
+import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
 
 
 import SliderLabel from './SliderLabel';
@@ -24,13 +26,13 @@ import { getOneWork, clearActiveWork } from '../store/works'
 
 const useStyles = makeStyles(theme => ({
     edit: {
-        height: 'calc(100vh - 225px)',
-        minHeight: 150,
+        height: 500,
         display: 'flex',
         justifyContent: 'space-between',
         flexDirection: 'column',
         backgroundColor: theme.palette.background.default,
         borderWidth: 2,
+        width: '100%'
     },
     replayContainer: {
         overflowY: "auto",
@@ -43,13 +45,14 @@ const useStyles = makeStyles(theme => ({
         paddingLeft: 25,
         paddingRight: 25,
         marginBottom: 25,
-        marginTop:25,
+        // marginTop: 25,
         whiteSpace: 'pre-line',
     },
     controls: {
-        marginTop: 20,
-        marginBottom:20,
-        borderRadius: 4,
+        // margin: 20,
+        // borderRadius: 4,
+        borderBottomLeftRadius: 4,
+        borderBottomRightRadius: 4,
         display: 'flex',
         alignItems: 'center',
         padding: 5,
@@ -65,25 +68,18 @@ const useStyles = makeStyles(theme => ({
     },
 }))
 
-
-const ViewPoem = () => {
-    const dispatch = useDispatch();
+const PoemContainer = ({ work }) => {
     const classes = useStyles();
-    const { workId } = useParams();
 
-    const title = useSelector(state => state.entities.works.activeWork.title);
-    const author = useSelector(state => state.entities.works.activeWork.displayName);
-    const changes = useSelector(state => state.entities.works.activeWork.changes);
-    const authorId = useSelector(state => state.entities.works.activeWork.userId);
+    const title = work.title;
+    const author = work.displayName;
+    const changes = work.changes;
+    const authorId = work.userId;
 
     const [playing, setPlaying] = useState(false);
     const [playingInterval, setPlayingInterval] = useState(null);
     const [replayVal, setReplayVal] = useState(0);
-
-    useEffect(() => {
-        dispatch(getOneWork(workId));
-        return () => dispatch(clearActiveWork())
-    }, [workId, dispatch])
+    const [saved, setSaved] = useState(false);
 
     useEffect(() => {
         if (changes) {
@@ -127,24 +123,40 @@ const ViewPoem = () => {
     }
     return (
         <>
-            <Container maxWidth="md">
-                <Grid container justify='center' align='center' direction='column'>
-                    <Typography style={{textTransform: 'uppercase'}}variant='h4'>{title}</Typography>
-                    <Link component={NavLink} to={`/authors/${authorId}`} color='secondary' variant='h6' gutterBottom>
-                        {`by ${author}`}
-                    </Link>
+
+            <Paper className={classes.edit} variant="outlined" >
+                <Grid container justify='space-between' direction='row' style={{ padding: 15 }}>
+                    <Grid item>
+                        <Typography color='textSecondary' variant='subtitle2'>
+                        {format(new Date(work.dateCreated), 'MM/dd/yyyy')}
+                        </Typography>
+                        <Link style={{ fontWeight: 'bold', paddingRight: 5 }} variant='h6' component={NavLink} to={`/works/${work.id}`} color='textPrimary' >
+                            {title}
+                        </Link>
+                        <Link component={NavLink} to={`/authors/${authorId}`} color='secondary' variant='h6' gutterBottom>
+                            {`by ${author}`}
+                        </Link>
+                    </Grid>
+                    {(saved) ? (
+                        <IconButton size='small' onClick={() => setSaved(false)}>
+                            <BookmarkIcon onClick={() => setSaved(false)} />
+                        </IconButton>
+                    ) : (
+                            <IconButton size='small' onClick={() => setSaved(true)}>
+
+                                <BookmarkBorderIcon />
+                            </IconButton>
+                        )}
                 </Grid>
-                <Paper className={classes.edit} variant="outlined" >
-                    <div className={classes.replayContainer}>
-                        <div
-                            className={classes.replayWindow}
-                            style={{
-                                fontSize: '1rem',
-                            }}>
-                            {reconstruct("", changes, replayVal)}
-                        </div>
+                <div className={classes.replayContainer}>
+                    <div
+                        className={classes.replayWindow}
+                        style={{
+                            fontSize: '1rem',
+                        }}>
+                        {reconstruct("", changes, replayVal)}
                     </div>
-                </Paper>
+                </div>
                 <div className={classes.controls}>
                     {(playing) ? (
                         <IconButton onClick={handleClickPause} size="small">
@@ -170,9 +182,9 @@ const ViewPoem = () => {
                         onChange={(e, val) => setReplayVal(val)}
                     />
                 </div>
-            </Container>
+            </Paper>
         </>
     )
 }
 
-export default ViewPoem;
+export default PoemContainer;

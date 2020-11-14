@@ -35,6 +35,11 @@ export const getWorks = () => async (dispatch) => {
     const res = await fetch(`/api/works`);
     if (res.ok) {
         const works = await res.json();
+        for (let work in works) {
+            if (works[work].changes) {
+                works[work].changes = JSON.parse(works[work].changes)
+            }
+        }
         dispatch(loadWorks(works))
     } else {
         const error = await res.json();
