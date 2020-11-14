@@ -59,7 +59,7 @@ const NavBar = () => {
 
     const handleLogout = () => {
         dispatch(logout());
-        history.push('/')
+        history.push('/');
     }
     if (location.pathname === "/" && loggedOut) {
         return null;
