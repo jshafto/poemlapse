@@ -7,6 +7,8 @@ export const LOAD_OWN_WORKS = 'poemlapse/works/LOAD_OWN_WORKS';
 export const CLEAR_WORKS = 'poemlapse/works/CLEAR_WORKS';
 export const CLEAR_ONE_WORK = 'poemlapse/works/CLEAR_ONE_WORK';
 export const FETCHING_WORK = 'poemlapse/works/FETCHING_WORK';
+export const SAVE_WORK = 'poemlapse/works/SAVE_WORK';
+export const REMOVE_SAVED_WORK = 'poemlapse/works/REMOVE_SAVED_WORK';
 
 // action creators
 export const loadWorks = (works) => ({
@@ -28,6 +30,16 @@ export const fetchingWork = (workId) => ({
     type: FETCHING_WORK,
     workId
 })
+
+export const saveWork = (workId) => ({
+    type: SAVE_WORK,
+    workId
+})
+export const removeSaved = (workId) => ({
+    type: REMOVE_SAVED_WORK,
+    workId
+})
+
 
 
 // thunks
@@ -76,12 +88,12 @@ export const getOneWork = (workId) => async (dispatch) => {
 export const publishWork = (draftId) => async (dispatch, getState) => {
     const csrf = getState().csrf;
     const requestOptions = {
-        method: "POST",
+        method: 'POST',
         headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": csrf,
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrf,
         },
-        credentials: "include",
+        credentials: 'include',
     };
     const res = await fetch(`/api/drafts/${draftId}/works`, requestOptions);
     if (res.ok) {
@@ -96,11 +108,11 @@ export const publishWork = (draftId) => async (dispatch, getState) => {
 export const unpublishWork = (workId) => async (dispatch, getState) => {
     const csrf = getState().csrf;
     const requestOptions = {
-        method: "DELETE",
+        method: 'DELETE',
         headers: {
-            "X-CSRFToken": csrf,
+            'X-CSRFToken': csrf,
         },
-        credentials: "include",
+        credentials: 'include',
     };
     const res = await fetch(`/api/works/${workId}`, requestOptions);
     if (res.ok) {
@@ -109,6 +121,46 @@ export const unpublishWork = (workId) => async (dispatch, getState) => {
     } else {
         const error = res.json();
         dispatch(postError(error.msg));
+    }
+}
+
+export const storeSaveWork = (workId) => async (dispatch, getState) => {
+    const csrf = getState().csrf;
+    const requestOptions = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrf,
+        },
+        credentials: 'include',
+    };
+    const res = await fetch(`/api/works/${workId}/saved`, requestOptions);
+    if (res.ok) {
+        const data= await res.json();
+        dispatch(saveWork(data.id))
+    } else {
+        const error = res.json();
+        dispatch(postError(error.msg))
+    }
+}
+
+export const storeUnsaveWork = (workId) => async (dispatch, getState) => {
+    const csrf = getState().csrf;
+    const requestOptions = {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrf,
+        },
+        credentials: 'include',
+    };
+    const res = await fetch(`/api/works/${workId}/saved`, requestOptions);
+    if (res.ok) {
+        const data= await res.json();
+        dispatch(removeSaved(data.id))
+    } else {
+        const error = res.json();
+        dispatch(postError(error.msg))
     }
 }
 // reducer
@@ -123,7 +175,33 @@ export default function reducer(state = { activeWork: {}, byId: {}, fetching: nu
         case CLEAR_ONE_WORK:
             return { ...state, activeWork: {} }
         case FETCHING_WORK:
-            return { ...state, activeWork: {}, fetching: action.workId }
+            return { ...state, activeWork: {}, fetching: action.workId };
+        case SAVE_WORK: {
+            const newState ={ ...state,
+                activeWork: {...state.activeWork},
+                byId: {...state.byId } };
+            if (state.activeWork.id===action.workId) {
+                newState.activeWork.saved = true;
+            }
+            if (state.byId[action.workId]) {
+                newState.byId = {...state.byId, [action.workId]: {...state.byId[action.workId], saved: true}};
+            }
+            return newState;
+
+        }
+        case REMOVE_SAVED_WORK: {
+            const newState ={ ...state,
+                activeWork: {...state.activeWork},
+                byId: {...state.byId } };
+            if (state.activeWork.id===action.workId) {
+                newState.activeWork.saved = false;
+            }
+            if (state.byId[action.workId]) {
+                newState.byId = {...state.byId, [action.workId]: {...state.byId[action.workId], saved: false}};
+            }
+            return newState;
+
+        }
         default:
             return state;
     }

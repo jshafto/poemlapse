@@ -36,7 +36,7 @@ const useStyles = makeStyles(theme => ({
         marginBottom: 15,
     },
     edit: {
-        height: 'calc(100vh - 150px)',
+        height: 'calc(100vh - 180px)',
         minHeight: 150,
         display: 'flex',
         justifyContent: 'space-between',
