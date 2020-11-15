@@ -130,7 +130,7 @@ const ViewPoem = () => {
             <Container maxWidth="md">
                 <Grid container justify='center' align='center' direction='column'>
                     <Typography style={{textTransform: 'uppercase'}}variant='h4'>{title}</Typography>
-                    <Link component={NavLink} to={`/authors/${authorId}`} color='secondary' variant='h6' gutterBottom>
+                    <Link component={NavLink} to={`/author/${authorId}`} color='secondary' variant='h6' gutterBottom>
                         {`by ${author}`}
                     </Link>
                 </Grid>

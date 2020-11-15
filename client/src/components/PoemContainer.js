@@ -51,8 +51,8 @@ const useStyles = makeStyles(theme => ({
     controls: {
         // margin: 20,
         // borderRadius: 4,
-        borderBottomLeftRadius: 4,
-        borderBottomRightRadius: 4,
+        borderBottomLeftRadius: 2,
+        borderBottomRightRadius: 2,
         display: 'flex',
         alignItems: 'center',
         padding: 5,
@@ -133,7 +133,7 @@ const PoemContainer = ({ work }) => {
                         <Link style={{ fontWeight: 'bold', paddingRight: 5 }} variant='h6' component={NavLink} to={`/works/${work.id}`} color='textPrimary' >
                             {title}
                         </Link>
-                        <Link component={NavLink} to={`/authors/${authorId}`} color='secondary' variant='h6' gutterBottom>
+                        <Link component={NavLink} to={`/author/${authorId}`} color='secondary' variant='h6' gutterBottom>
                             {`by ${author}`}
                         </Link>
                     </Grid>
