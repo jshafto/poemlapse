@@ -13,7 +13,8 @@ import Editor from './components/Editor';
 import DraftEditor from './components/DraftEditor';
 import LandingOrDashboard from './components/LandingOrDashboard';
 import ViewPoem from './components/ViewPoem';
-import PoemBrowser from './components/PoemBrowser'
+import PoemBrowser from './components/PoemBrowser';
+import Profile from './components/Profile'
 import Footer from './components/Footer';
 import { restoreCSRF } from './store/csrf';
 import { themeObj } from './theme'
@@ -48,6 +49,9 @@ function App() {
                         <ProtectedRoute path="/users" exact={true} component={UserList} />
                         <Route exact path="/editor" >
                             <Editor />
+                        </Route>
+                        <Route exact path="/author/<authorId>" >
+                            < Profile/>
                         </Route>
                         <Route exact path="/drafts/:draftId" >
                             <DraftEditor />

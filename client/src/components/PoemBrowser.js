@@ -7,9 +7,16 @@ import Container from '@material-ui/core/Container'
 import PoemContainer from './PoemContainer';
 import { getWorks, clearWorks } from '../store/works'
 
+import { compareDesc } from 'date-fns';
+
+
 const PoemBrowser = () => {
+
+    const sortWorks = (a,b) => {
+        return compareDesc(new Date(a.datePublished), new Date(b.datePublished))
+    }
     const dispatch = useDispatch();
-    const works = useSelector(state => Object.values(state.entities.works.byId));
+    const works = useSelector(state => Object.values(state.entities.works.byId).sort(sortWorks));
 
     useEffect(() => {
         dispatch(getWorks());

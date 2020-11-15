@@ -32,6 +32,18 @@ class User(db.Model, UserMixin):
             'last_name': self.last_name,
         }
 
+    def to_profile(self):
+        return {
+            'id': self.id,
+            'username': self.username,
+            'email': self.email,
+            'bio': self.bio,
+            'firstName': self.first_name,
+            'lastName': self.last_name,
+            'displayName': self.display_name,
+            'works': self.works,
+        }
+
     @property
     def first(self):
         return self.first_name

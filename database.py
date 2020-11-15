@@ -23,4 +23,6 @@ with app.app_context():
     db.session.add(soonmi)
     db.session.add(alissa)
 
+
+
     db.session.commit()
