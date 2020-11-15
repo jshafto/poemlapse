@@ -50,7 +50,7 @@ function App() {
                         <Route exact path="/editor" >
                             <Editor />
                         </Route>
-                        <Route exact path="/author/<authorId>" >
+                        <Route exact path="/author/:authorId" >
                             < Profile/>
                         </Route>
                         <Route exact path="/drafts/:draftId" >
