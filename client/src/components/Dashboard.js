@@ -12,7 +12,7 @@ import Tab from '@material-ui/core/Tab';
 
 
 
-import { newDraft, getDrafts } from '../store/drafts';
+import { newDraft } from '../store/drafts';
 import DraftList from './DraftList';
 import PublishedWorksList from './PublishedWorksList';
 import SavedWorksList from './SavedWorksList';

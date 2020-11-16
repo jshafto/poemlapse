@@ -41,6 +41,7 @@ class User(db.Model, UserMixin):
 
     def to_profile(self):
         work_collection = { work.id: work.work_info() for work in self.works }
+        saved_collection = { work.id: work.work_info() for work in self.saved }
         return {
             'id': self.id,
             'username': self.username,
@@ -49,6 +50,7 @@ class User(db.Model, UserMixin):
             'lastName': self.last_name,
             'displayName': self.display_name,
             'works': work_collection,
+            'saved': saved_collection,
         }
 
     @property
