@@ -5,7 +5,6 @@ import { useDispatch } from "react-redux";
 import { ThemeProvider, createMuiTheme, makeStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 
-import UserList from './components/UsersList';
 import LoginForm from './components/LoginForm';
 import SignUp from './components/SignUp'
 import NavBar from './components/NavBar';
@@ -18,7 +17,7 @@ import Profile from './components/Profile'
 import Footer from './components/Footer';
 import { restoreCSRF } from './store/csrf';
 import { themeObj } from './theme'
-import { ProtectedRoute, AuthRoute } from './Routes';
+import { AuthRoute } from './Routes';
 
 const useStyles = makeStyles((theme) => ({
     site: {
@@ -46,11 +45,10 @@ function App() {
                 <div className={classes.site}>
                     <NavBar />
                     <Switch>
-                        <ProtectedRoute path="/users" exact={true} component={UserList} />
                         <Route exact path="/editor" >
                             <Editor />
                         </Route>
-                        <Route exact path="/author/<authorId>" >
+                        <Route exact path="/author/:authorId" >
                             < Profile/>
                         </Route>
                         <Route exact path="/drafts/:draftId" >

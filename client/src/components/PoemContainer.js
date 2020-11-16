@@ -22,7 +22,8 @@ import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
 
 import SliderLabel from './SliderLabel';
 import { reconstruct } from '../utils/editorUtils';
-import { getOneWork, clearActiveWork } from '../store/works'
+import { getOneWork, clearActiveWork } from '../store/works';
+import { storeSaveWork, storeUnsaveWork } from '../store/works';
 
 const useStyles = makeStyles(theme => ({
     edit: {
@@ -70,16 +71,19 @@ const useStyles = makeStyles(theme => ({
 
 const PoemContainer = ({ work }) => {
     const classes = useStyles();
+    const dispatch = useDispatch();
 
     const title = work.title;
     const author = work.displayName;
     const changes = work.changes;
     const authorId = work.userId;
+    const poemId = work.id;
+    const saved = work.saved;
 
     const [playing, setPlaying] = useState(false);
     const [playingInterval, setPlayingInterval] = useState(null);
     const [replayVal, setReplayVal] = useState(0);
-    const [saved, setSaved] = useState(false);
+    // const [saved, setSaved] = useState(false);
 
     useEffect(() => {
         if (changes) {
@@ -121,6 +125,14 @@ const PoemContainer = ({ work }) => {
             return ""
         }
     }
+
+    const handleSavePoem = () => {
+        dispatch(storeSaveWork(poemId))
+    }
+
+    const handleUnsavePoem = () => {
+        dispatch(storeUnsaveWork(poemId))
+    }
     return (
         <>
 
@@ -138,12 +150,11 @@ const PoemContainer = ({ work }) => {
                         </Link>
                     </Grid>
                     {(saved) ? (
-                        <IconButton size='small' onClick={() => setSaved(false)}>
-                            <BookmarkIcon onClick={() => setSaved(false)} />
+                        <IconButton size='small' onClick={handleUnsavePoem}>
+                            <BookmarkIcon />
                         </IconButton>
                     ) : (
-                            <IconButton size='small' onClick={() => setSaved(true)}>
-
+                            <IconButton size='small' onClick={handleSavePoem}>
                                 <BookmarkBorderIcon />
                             </IconButton>
                         )}

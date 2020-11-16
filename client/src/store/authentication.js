@@ -1,4 +1,5 @@
-import { authError, clearErrors } from './errors'
+import { authError, clearErrors } from './errors';
+import { loadActiveAuthor } from './authors';
 // constants
 export const SET_USER = 'poemlapse/authentication/SET_USER';
 export const REMOVE_USER = 'poemlapse/authentication/REMOVE_USER';
@@ -16,12 +17,12 @@ export const removeUser = () => ({
 export const login = (email, password) => async (dispatch, getState) => {
     const csrf = getState().csrf;
     const requestOptions = {
-        method: "POST",
+        method: 'POST',
         headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": csrf,
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrf,
         },
-        credentials: "include",
+        credentials: 'include',
         body: JSON.stringify({ email, password }),
     };
 
@@ -39,31 +40,31 @@ export const login = (email, password) => async (dispatch, getState) => {
 export const logout = () => async (dispatch, getState) => {
     const csrf = getState().csrf;
     const requestOptions = {
-        method: "POST",
+        method: 'POST',
         headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": csrf,
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrf,
         },
-        credentials: "include",
+        credentials: 'include',
     };
     const response = await fetch(`/api/session/logout`, requestOptions);
     if (response.ok) {
         dispatch(removeUser());
     } else {
         // change to actual dispatch of error
-        console.log("error")
+        console.log('error')
     }
 }
 
 export const signup = (username, email, password) => async (dispatch, getState) => {
     const csrf = getState().csrf;
     const requestOptions = {
-        method: "POST",
+        method: 'POST',
         headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": csrf,
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrf,
         },
-        credentials: "include",
+        credentials: 'include',
         body: JSON.stringify({ username, email, password }),
     };
 
@@ -76,6 +77,31 @@ export const signup = (username, email, password) => async (dispatch, getState) 
         dispatch(authError(data.msg))
     }
 }
+
+
+export const updateUserInfo= (firstName, lastName, bio) => async (dispatch, getState) => {
+    const csrf = getState().csrf;
+    const requestOptions = {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrf,
+        },
+        credentials: 'include',
+        body: JSON.stringify({ firstName, lastName, bio }),
+    };
+
+    const response = await fetch(`/api/users/me`, requestOptions);
+    if (response.ok) {
+        const data = await response.json();
+        dispatch(setUser(data.current_user));
+        dispatch(loadActiveAuthor(data.profile));
+    } else {
+        const data = await response.json();
+        dispatch(authError(data.msg))
+    }
+}
+
 // reducer
 export default function reducer(state = {}, action) {
     switch (action.type) {
