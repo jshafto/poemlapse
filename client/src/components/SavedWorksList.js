@@ -11,7 +11,7 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import BookmarkIcon from '@material-ui/icons/Bookmark';
 
-import { getOwnSavedWorks } from '../store/saved';
+import { getOwnSavedWorks, clearSaved } from '../store/saved';
 import { storeUnsaveWork } from '../store/works'
 import { sortWorks } from '../utils/workUtils';
 
@@ -27,6 +27,7 @@ const SavedWorksList = () => {
 
     useEffect(() => {
         dispatch(getOwnSavedWorks());
+        return () => dispatch(clearSaved());
     }, []);
 
     const handleUnsave = (id) => (e) => {

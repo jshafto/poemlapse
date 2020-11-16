@@ -17,7 +17,7 @@ import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import Tooltip from '@material-ui/core/Tooltip'
+import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 import PlayArrowRoundedIcon from '@material-ui/icons/PlayArrowRounded';
 import PauseIcon from '@material-ui/icons/Pause';
@@ -30,6 +30,7 @@ import SliderLabel from './SliderLabel';
 import { compareStrings, reconstruct } from '../utils/editorUtils';
 import { getActiveDraft, clearActiveDraft, updateDraft } from '../store/drafts';
 import { publishWork } from '../store/works'
+import { setAutosaved, setNotSaved } from '../store/ui';
 
 const useStyles = makeStyles(theme => ({
     title: {
@@ -140,7 +141,7 @@ const DraftEditor = () => {
     const storedChanges = useSelector(state => state.entities.drafts.activeDraft.changes);
     const dateCreated = useSelector(state => state.entities.drafts.activeDraft.date_created);
     const fetchingPublishId = useSelector(state => state.entities.works.fetching);
-
+    const autosaved = useSelector(state => state.ui.autosaved)
 
     const [titleField, setTitleField] = useState(storedTitle || "")
     const [changes, setChanges] = useState([{inserted:"", front:0, end:0, t:(new Date())}]);
@@ -245,6 +246,7 @@ const DraftEditor = () => {
     const saveChanges = (changeList, value) => {
         const beginning = value.slice(0,280);
         dispatch(updateDraft(draftId, null, JSON.stringify(changeList), beginning))
+        dispatch(setAutosaved())
     }
 
     const handleUpdate = (e) => {
@@ -254,8 +256,9 @@ const DraftEditor = () => {
         clearTimeout(saveTimeout);
         setChanges(newChanges);
         setPoemField(currentValue);
-        const timeout = setTimeout(saveChanges, 3000, newChanges, currentValue);
+        const timeout = setTimeout(saveChanges, 2000, newChanges, currentValue);
         setSaveTimeout(timeout);
+        dispatch(setNotSaved())
     }
 
     const labelFormatter = (x) => {
@@ -266,8 +269,19 @@ const DraftEditor = () => {
         dispatch(publishWork(draftId))
     }
 
+    useEffect(() => {
+        return () => {
+            saveChanges(changes, poemField);
+            clearTimeout(saveTimeout);
+            dispatch(setAutosaved());
+        }
+    }, [])
     return (
         <Container maxWidth="md">
+            <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'}}>
             {(editingTitle) ? (
                 <ClickAwayListener onClickAway={() => setEditingTitle(false)}>
                     <form onSubmit={submitNewTitle}>
@@ -288,6 +302,12 @@ const DraftEditor = () => {
                         {storedTitle}
                     </Typography>
                 )}
+            {(autosaved) ? (
+                <Typography color='textSecondary'style={{fontStyle: 'italic'}}>saved</Typography>
+            ) : (
+                <Typography color='textSecondary'style={{fontStyle: 'italic'}}>autosaving...</Typography>
+            )}
+            </div>
             <Paper className={classes.edit} variant="outlined" >
                 <div className={classes.editorButtons}>
                     <Tooltip title="Publish">

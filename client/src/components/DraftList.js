@@ -21,7 +21,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
 
 
-import { deleteDraft, getDrafts } from '../store/drafts'
+import { deleteDraft, getDrafts, clearDrafts } from '../store/drafts'
 
 const DraftList = () => {
     const dispatch = useDispatch();
@@ -40,7 +40,8 @@ const DraftList = () => {
     }, [fetchingDraftId])
 
     useEffect(() => {
-        dispatch(getDrafts())
+        dispatch(getDrafts());
+        return () => dispatch(clearDrafts());
     }, [])
 
     const handleSortByColumn = (col) => (e) => {
