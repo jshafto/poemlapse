@@ -194,7 +194,7 @@ const Editor = () => {
     }
 
     const demoLogin = () => {
-        dispatch(login('bob@bob.bob', 'bobpassword'));
+        dispatch(login('demo@poems.poem', 'apoetrydemohownice'));
         history.push('/');
     }
 

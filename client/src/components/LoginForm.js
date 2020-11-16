@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { NavLink } from "react-router-dom";
+import { NavLink, useHistory } from "react-router-dom";
 
 import { makeStyles } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
@@ -21,12 +21,18 @@ const useStyles = makeStyles((theme) => ({
         paddingBottom: 10,
         marginTop: 15,
         marginBottom: 15
+    },
+    demo: {
+        paddingTop: 10,
+        paddingBottom: 10,
+        marginBottom: 15
     }
 }));
 
 const LoginForm = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
+    const history = useHistory();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
@@ -39,6 +45,11 @@ const LoginForm = () => {
     const submitForm = (e) => {
         e.preventDefault();
         dispatch(login(email, password))
+    }
+
+    const demoLogin = () => {
+        dispatch(login('demo@poems.poem', 'apoetrydemohownice'));
+        history.push('/');
     }
     return (
         <Container component='main' maxWidth='xs'>
@@ -84,9 +95,20 @@ const LoginForm = () => {
                         type='submit'
                         fullWidth
                         variant='contained'
-                        color='secondary'
+                        color='primary'
                         size='large'>
                         Sign In
+                    </Button>
+                    <Button
+                        variant='filled'
+                        type='button'
+                        className={classes.demo}
+                        fullWidth
+                        variant='contained'
+                        color='primary'
+                        size='large'
+                        onClick={demoLogin}>
+                        Demo User
                     </Button>
                     <Link component={NavLink} to='/signup' variant='body2' color='secondary'>
                         Don't have an account? Sign up
