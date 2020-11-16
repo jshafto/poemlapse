@@ -17,7 +17,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
-import { getOwnWorks, unpublishWork } from '../store/works';
+import { getOwnWorks, unpublishWork, clearWorks } from '../store/works';
 import { sortWorks } from '../utils/workUtils';
 
 
@@ -36,6 +36,7 @@ const PublishedWorksList = () => {
 
     useEffect(() => {
         dispatch(getOwnWorks());
+        return () => dispatch(clearWorks())
     }, [])
 
 
