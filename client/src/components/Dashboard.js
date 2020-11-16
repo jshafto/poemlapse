@@ -14,7 +14,8 @@ import Tab from '@material-ui/core/Tab';
 
 import { newDraft, getDrafts } from '../store/drafts';
 import DraftList from './DraftList';
-import PublishedWorksList from './PublishedWorksList'
+import PublishedWorksList from './PublishedWorksList';
+import SavedWorksList from './SavedWorksList';
 
 const Dashboard = () => {
     const dispatch = useDispatch();
@@ -49,12 +50,16 @@ const Dashboard = () => {
                 >
                 <Tab style={{fontSize: "1.3rem"}} label="Drafts"/>
                 <Tab style={{fontSize: "1.3rem"}} label="Published"/>
+                <Tab style={{fontSize: "1.3rem"}} label="Collection"/>
             </Tabs>
             <div hidden={selectedTab !== 0}>
                 <DraftList />
             </div>
             <div hidden={selectedTab !== 1}>
                 <PublishedWorksList/>
+            </div>
+            <div hidden={selectedTab !== 2}>
+                <SavedWorksList/>
             </div>
         </Container>
     )
