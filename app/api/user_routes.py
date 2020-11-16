@@ -10,6 +10,13 @@ def get_own_works():
     response = Work.query.filter_by(user_id=current_user.id).all()
     return {work.id: work.work_info() for work in response}
 
+@user_routes.route('/me/saved')
+@login_required
+def get_own_saved():
+    user_id = current_user.id
+    user = User.query.get(user_id)
+    return {work.id: work.with_is_saved(user_id) for work in user.saved}, 200
+
 
 @user_routes.route('/<user_id>')
 def get_user_profile(user_id):
