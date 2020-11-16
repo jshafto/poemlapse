@@ -10,17 +10,23 @@ import Paper from '@material-ui/core/Paper';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import Slider from '@material-ui/core/Slider';
-import Tooltip from '@material-ui/core/Tooltip'
 import IconButton from '@material-ui/core/IconButton';
 import PlayArrowRoundedIcon from '@material-ui/icons/PlayArrowRounded';
 import PauseIcon from '@material-ui/icons/Pause';
 import Grid from '@material-ui/core/Grid';
 import Link from '@material-ui/core/Link';
+import BookmarkIcon from '@material-ui/icons/Bookmark';
+import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
 
 
 import SliderLabel from './SliderLabel';
 import { reconstruct } from '../utils/editorUtils';
-import { getOneWork, clearActiveWork } from '../store/works'
+import {
+    getOneWork,
+    clearActiveWork,
+    storeUnsaveWork,
+    storeSaveWork
+} from '../store/works';
 
 const useStyles = makeStyles(theme => ({
     edit: {
@@ -71,11 +77,14 @@ const ViewPoem = () => {
     const classes = useStyles();
     const { workId } = useParams();
 
+    const loggedOut = useSelector(state => !state.authentication.id)
+
     const title = useSelector(state => state.entities.works.activeWork.title);
     const author = useSelector(state => state.entities.works.activeWork.displayName);
     const changes = useSelector(state => state.entities.works.activeWork.changes);
     const authorId = useSelector(state => state.entities.works.activeWork.userId);
     const datePublished = useSelector(state => state.entities.works.activeWork.datePublished);
+    const saved = useSelector(state => state.entities.works.activeWork.saved)
 
     const [playing, setPlaying] = useState(false);
     const [playingInterval, setPlayingInterval] = useState(null);
@@ -126,11 +135,32 @@ const ViewPoem = () => {
             return ""
         }
     }
+    const handleSavePoem = () => {
+        dispatch(storeSaveWork(workId))
+    }
+
+    const handleUnsavePoem = () => {
+        dispatch(storeUnsaveWork(workId))
+    }
     return (
         <>
             <Container maxWidth="md">
                 <Grid container direction='column'>
-                    <Typography variant='h4'>{title}</Typography>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <Typography variant='h4'>{title}</Typography>
+                        {(loggedOut) ? null : (
+                            (saved) ? (
+                                <IconButton onClick={handleUnsavePoem}>
+                                    <BookmarkIcon />
+                                </IconButton>
+                            ) : (
+                                    <IconButton onClick={handleSavePoem}>
+                                        <BookmarkBorderIcon />
+                                    </IconButton>
+                                )
+
+                        )}
+                    </div>
                     <Typography variant='subtitle' color='textSecondary'>
                         <Link component={NavLink} to={`/author/${authorId}`} color='secondary' variant='h6' gutterBottom>
                             {`by ${author}`}
