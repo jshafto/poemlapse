@@ -34,8 +34,8 @@ def update_user():
     user = User.query.get(user_id)
 
     bio = request.json.get('bio', None)
-    first_name = request.json.get('first_name', None)
-    last_name = request.json.get('last_name', None)
+    first_name = request.json.get('firstName', None)
+    last_name = request.json.get('lastName', None)
 
     try:
         if bio:
@@ -48,4 +48,5 @@ def update_user():
     except AssertionError as exception_message:
         return jsonify(msg=str(exception_message)), 400
 
-    return user.to_profile(), 200
+    resp = jsonify(current_user=user.to_dict(), profile=user.to_profile())
+    return resp, 200

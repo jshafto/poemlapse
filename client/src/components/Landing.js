@@ -47,14 +47,14 @@ const useStyles = makeStyles(theme => ({
         overflow: 'hidden',
     },
     navButtons: {
-        marginTop:10,
+        marginTop: 10,
         marginLeft: 10,
         color: "rgba(255,255,255,0.9)",
         fontWeight: 'bold',
         fontSize: '1.2rem'
     },
     skip: {
-        marginTop:10,
+        marginTop: 10,
         fontWeight: 'bold',
         fontSize: '1.2rem'
     }
@@ -127,35 +127,35 @@ const Landing = () => {
                             Skip <SkipNextIcon />
                         </Button>
                     ) : (
-                        <>
-                            <Button
-                                disableElevation
-                                className={classes.navButtons}
-                                component={NavLink}
-                                to='/editor'
-                                variant='contained'
-                                color='primary'
+                            <>
+                                <Button
+                                    disableElevation
+                                    className={classes.navButtons}
+                                    component={NavLink}
+                                    to='/editor'
+                                    variant='contained'
+                                    color='primary'
                                 > Demo
                             </Button>
-                            <Button
-                                disableElevation
-                                className={classes.navButtons}
-                                component={NavLink}
-                                to='/browse'
-                                variant='contained'
-                                color='primary'
+                                <Button
+                                    disableElevation
+                                    className={classes.navButtons}
+                                    component={NavLink}
+                                    to='/browse'
+                                    variant='contained'
+                                    color='primary'
                                 > Read
                             </Button>
-                            <Button
-                                disableElevation
-                                className={classes.navButtons}
-                                component={NavLink}
-                                to='/signup'
-                                variant='contained'
-                                color='primary'
+                                <Button
+                                    disableElevation
+                                    className={classes.navButtons}
+                                    component={NavLink}
+                                    to='/signup'
+                                    variant='contained'
+                                    color='primary'
                                 > Get Started
                             </Button>
-                        </>
+                            </>
                         )}
                 </Grid>
             </Container>
@@ -180,7 +180,7 @@ const Landing = () => {
                 </Typography>
                 <Typography variant='h6'>
                     Using PoemLapse, you can write poems and replay your process in the editor.
-                    Work on drafts, and publish them for your followers to view.
+                    Work on drafts, and publish them for others to view.
                     Browse recent works, and save your favorites.
                 </Typography>
                 <Typography color='secondary' variant='h3' align='center' gutterBottom>
