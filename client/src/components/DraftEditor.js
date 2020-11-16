@@ -271,9 +271,11 @@ const DraftEditor = () => {
 
     useEffect(() => {
         return () => {
-            saveChanges(changes, poemField);
-            clearTimeout(saveTimeout);
-            dispatch(setAutosaved());
+            if (saveTimeout) {
+                saveChanges(changes, poemField);
+                clearTimeout(saveTimeout);
+                dispatch(setAutosaved());
+            }
         }
     }, [])
     return (
