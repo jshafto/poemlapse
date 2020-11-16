@@ -20,7 +20,6 @@ export const compareStrings = (str, next) => {
 
     inserted = next.slice(front, next.length - end);
     const t = new Date();
-    console.log({ inserted, front, end, t })
     return { inserted, front, end, t }
 }
 
