@@ -187,7 +187,7 @@ const Landing = () => {
                     ...
                 </Typography>
                 <Typography variant='h6' >
-                    The Poemlapse app is just a demo, but
+                    The PoemLapse app is just a demo, but
                     if you'd like to see real poetry in process,
                         check out <Link
                         color='secondary'
