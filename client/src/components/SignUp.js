@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useHistory } from 'react-router-dom';
 
 import { makeStyles } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
@@ -9,7 +9,7 @@ import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import Link from '@material-ui/core/Link';
 
-import { signup } from '../store/authentication';
+import { signup, login } from '../store/authentication';
 import { clearErrors } from '../store/errors';
 
 const useStyles = makeStyles((theme) => ({
@@ -21,12 +21,18 @@ const useStyles = makeStyles((theme) => ({
         paddingBottom: 10,
         marginTop: 15,
         marginBottom: 15
+    },
+    demo: {
+        paddingTop: 10,
+        paddingBottom: 10,
+        marginBottom: 15
     }
 }));
 
 const SignupForm = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
+    const history = useHistory();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [username, setUsername] = useState('')
@@ -41,6 +47,11 @@ const SignupForm = () => {
     const submitForm = (e) => {
         e.preventDefault();
         dispatch(signup(username, email, password))
+    }
+
+    const demoLogin = () => {
+        dispatch(login('demo@poems.poem', 'apoetrydemohownice'));
+        history.push('/');
     }
     return (
         <Container component='main' maxWidth='xs'>
@@ -98,9 +109,20 @@ const SignupForm = () => {
                         type='submit'
                         fullWidth
                         variant='contained'
-                        color='secondary'
+                        color='primary'
                         size='large'>
                         Sign Up
+                    </Button>
+                    <Button
+                        variant='filled'
+                        type='button'
+                        className={classes.demo}
+                        fullWidth
+                        variant='contained'
+                        color='primary'
+                        size='large'
+                        onClick={demoLogin}>
+                        Demo User
                     </Button>
                     <Link component={NavLink} to='/signin' variant='body2' color='secondary'>
                         Already have an account? Sign in.
