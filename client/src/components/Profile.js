@@ -87,7 +87,7 @@ const Profile = () => {
                     {(bio) ? (
                         <Typography>ABOUT:</Typography>
                     ) : (null)}
-                    <Typography variant='body1'>{bio}</Typography>
+                    <Typography variant='body1' style={{whiteSpace: 'pre-line',}}>{bio}</Typography>
                 </Grid>
                 <Grid item xs={12} sm={9}>
                     <Tabs
