@@ -24,7 +24,7 @@ import { getOneWork, clearActiveWork } from '../store/works'
 
 const useStyles = makeStyles(theme => ({
     edit: {
-        height: 'calc(100vh - 225px)',
+        height: 'calc(100vh - 300px)',
         minHeight: 150,
         display: 'flex',
         justifyContent: 'space-between',
@@ -43,12 +43,12 @@ const useStyles = makeStyles(theme => ({
         paddingLeft: 25,
         paddingRight: 25,
         marginBottom: 25,
-        marginTop:25,
+        marginTop: 25,
         whiteSpace: 'pre-line',
     },
     controls: {
         marginTop: 20,
-        marginBottom:20,
+        marginBottom: 20,
         borderRadius: 4,
         display: 'flex',
         alignItems: 'center',
@@ -75,6 +75,7 @@ const ViewPoem = () => {
     const author = useSelector(state => state.entities.works.activeWork.displayName);
     const changes = useSelector(state => state.entities.works.activeWork.changes);
     const authorId = useSelector(state => state.entities.works.activeWork.userId);
+    const datePublished = useSelector(state => state.entities.works.activeWork.datePublished);
 
     const [playing, setPlaying] = useState(false);
     const [playingInterval, setPlayingInterval] = useState(null);
@@ -128,11 +129,14 @@ const ViewPoem = () => {
     return (
         <>
             <Container maxWidth="md">
-                <Grid container justify='center' align='center' direction='column'>
-                    <Typography style={{textTransform: 'uppercase'}}variant='h4'>{title}</Typography>
-                    <Link component={NavLink} to={`/author/${authorId}`} color='secondary' variant='h6' gutterBottom>
-                        {`by ${author}`}
-                    </Link>
+                <Grid container direction='column'>
+                    <Typography variant='h4'>{title}</Typography>
+                    <Typography variant='subtitle' color='textSecondary'>
+                        <Link component={NavLink} to={`/author/${authorId}`} color='secondary' variant='h6' gutterBottom>
+                            {`by ${author}`}
+                        </Link>
+                        {(datePublished) ? ` | ${format(new Date(datePublished), 'MM/dd/yyy')}` : ''}
+                    </Typography>
                 </Grid>
                 <Paper className={classes.edit} variant="outlined" >
                     <div className={classes.replayContainer}>

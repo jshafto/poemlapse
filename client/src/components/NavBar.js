@@ -56,7 +56,7 @@ const NavBar = () => {
 
 
     const loggedOut = useSelector(state => !state.authentication.id)
-
+    const userId = useSelector(state => state.authentication.id)
     const handleLogout = () => {
         dispatch(logout());
         history.push('/');
@@ -85,7 +85,7 @@ const NavBar = () => {
                     <Button component={NavLink} to='/editor' className={classes.button}>Demo</Button>
                     <Button component={NavLink} to='/browse' className={classes.button}>Browse</Button>
                     {(loggedOut) ? (<Button component={NavLink} to="/signup" className={classes.button}>Join</Button>
-                    ) : (null)}
+                    ) : (<Button className={classes.button} component={NavLink} to={`/author/${userId}`}>Profile</Button>)}
                     {(loggedOut) ? (
 
                         <Button component={NavLink} to="/signin" className={classes.button}>Sign In</Button>

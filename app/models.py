@@ -8,6 +8,11 @@ from sqlalchemy.sql import func
 db = SQLAlchemy()
 
 
+saves = db.Table('saves',
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
+    db.Column('work_id', db.Integer, db.ForeignKey('works.id'), primary_key=True)
+)
+
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
 
@@ -21,18 +26,9 @@ class User(db.Model, UserMixin):
 
     drafts = db.relationship('Draft', back_populates='user')
     works = db.relationship('Work', back_populates='user')
+    saved = db.relationship('Work', secondary=saves, lazy='subquery')
 
     def to_dict(self):
-        return {
-            'id': self.id,
-            'username': self.username,
-            'email': self.email,
-            'bio': self.bio,
-            'first_name': self.first_name,
-            'last_name': self.last_name,
-        }
-
-    def to_profile(self):
         return {
             'id': self.id,
             'username': self.username,
@@ -41,7 +37,20 @@ class User(db.Model, UserMixin):
             'firstName': self.first_name,
             'lastName': self.last_name,
             'displayName': self.display_name,
-            'works': self.works,
+        }
+
+    def to_profile(self):
+        work_collection = { work.id: work.work_info() for work in self.works }
+        saved_collection = { work.id: work.work_info() for work in self.saved }
+        return {
+            'id': self.id,
+            'username': self.username,
+            'bio': self.bio,
+            'firstName': self.first_name,
+            'lastName': self.last_name,
+            'displayName': self.display_name,
+            'works': work_collection,
+            'saved': saved_collection,
         }
 
     @property
@@ -188,6 +197,11 @@ class Work(db.Model):
 
     draft = db.relationship('Draft', back_populates='work')
     user = db.relationship('User', back_populates='works')
+    users_saved = db.relationship('User', secondary=saves, lazy='subquery')
+
+    def saved_by_user(self, user_id):
+        return self.users_saved
+
 
     def work_info(self):
         return {
@@ -218,4 +232,21 @@ class Work(db.Model):
             'displayName': self.user.display_name,
             'firstName': self.user.first,
             'lastName': self.user.last,
+        }
+    def with_is_saved(self,user):
+        saved = True if user in self.users_saved else False
+        return {
+            'id': self.id,
+            'userId': self.user_id,
+            'draftId': self.draft_id,
+            'title': self.title,
+            'changes': self.changes,
+            'beginning': self.beginning,
+            'dateCreated': self.date_created,
+            'dateUpdated': self.date_updated,
+            'datePublished': self.date_published,
+            'displayName': self.user.display_name,
+            'firstName': self.user.first,
+            'lastName': self.user.last,
+            'saved': saved,
         }
