@@ -83,7 +83,8 @@ const PoemContainer = ({ work }) => {
     const [playing, setPlaying] = useState(false);
     const [playingInterval, setPlayingInterval] = useState(null);
     const [replayVal, setReplayVal] = useState(0);
-    // const [saved, setSaved] = useState(false);
+
+    const loggedOut = useSelector(state => !state.authentication.id)
 
     useEffect(() => {
         if (changes) {
@@ -140,7 +141,7 @@ const PoemContainer = ({ work }) => {
                 <Grid container justify='space-between' direction='row' style={{ padding: 15 }}>
                     <Grid item>
                         <Typography color='textSecondary' variant='subtitle2'>
-                        {format(new Date(work.dateCreated), 'MM/dd/yyyy')}
+                            {format(new Date(work.dateCreated), 'MM/dd/yyyy')}
                         </Typography>
                         <Link style={{ fontWeight: 'bold', paddingRight: 5 }} variant='h6' component={NavLink} to={`/works/${work.id}`} color='textPrimary' >
                             {title}
@@ -149,15 +150,17 @@ const PoemContainer = ({ work }) => {
                             {`by ${author}`}
                         </Link>
                     </Grid>
-                    {(saved) ? (
-                        <IconButton size='small' onClick={handleUnsavePoem}>
-                            <BookmarkIcon />
-                        </IconButton>
-                    ) : (
-                            <IconButton size='small' onClick={handleSavePoem}>
-                                <BookmarkBorderIcon />
+                    {(loggedOut) ? null : (
+                        (saved) ? (
+                            <IconButton size='small' onClick={handleUnsavePoem}>
+                                <BookmarkIcon />
                             </IconButton>
-                        )}
+                        ) : (
+                                <IconButton size='small' onClick={handleSavePoem}>
+                                    <BookmarkBorderIcon />
+                                </IconButton>
+                            )
+                    )}
                 </Grid>
                 <div className={classes.replayContainer}>
                     <div

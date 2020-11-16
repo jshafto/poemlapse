@@ -21,10 +21,12 @@ import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
 
 import SliderLabel from './SliderLabel';
 import { reconstruct } from '../utils/editorUtils';
-import { getOneWork,
+import {
+    getOneWork,
     clearActiveWork,
     storeUnsaveWork,
-    storeSaveWork } from '../store/works';
+    storeSaveWork
+} from '../store/works';
 
 const useStyles = makeStyles(theme => ({
     edit: {
@@ -74,6 +76,8 @@ const ViewPoem = () => {
     const dispatch = useDispatch();
     const classes = useStyles();
     const { workId } = useParams();
+
+    const loggedOut = useSelector(state => !state.authentication.id)
 
     const title = useSelector(state => state.entities.works.activeWork.title);
     const author = useSelector(state => state.entities.works.activeWork.displayName);
@@ -142,17 +146,20 @@ const ViewPoem = () => {
         <>
             <Container maxWidth="md">
                 <Grid container direction='column'>
-                    <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                    <Typography variant='h4'>{title}</Typography>
-                    {(saved) ? (
-                    <IconButton onClick={handleUnsavePoem}>
-                        <BookmarkIcon />
-                    </IconButton>
-                    ) : (
-                    <IconButton onClick={handleSavePoem}>
-                        <BookmarkBorderIcon/>
-                    </IconButton>
-                    )}
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <Typography variant='h4'>{title}</Typography>
+                        {(loggedOut) ? null : (
+                            (saved) ? (
+                                <IconButton onClick={handleUnsavePoem}>
+                                    <BookmarkIcon />
+                                </IconButton>
+                            ) : (
+                                    <IconButton onClick={handleSavePoem}>
+                                        <BookmarkBorderIcon />
+                                    </IconButton>
+                                )
+
+                        )}
                     </div>
                     <Typography variant='subtitle' color='textSecondary'>
                         <Link component={NavLink} to={`/author/${authorId}`} color='secondary' variant='h6' gutterBottom>
