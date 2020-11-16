@@ -5,8 +5,9 @@ import { useHistory } from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Container from '@material-ui/core/Container';
-import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
+import AddIcon from '@material-ui/icons/Add';
 import Tooltip from '@material-ui/core/Tooltip';
+import Button from '@material-ui/core/Button'
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
@@ -38,11 +39,13 @@ const Dashboard = () => {
     return (
         <Container maxWidth="lg">
             <Typography variant="h4">My poems</Typography>
-            <Tooltip title="New Draft">
-                <IconButton color="primary" variant="outlined" onClick={createPoem}>
-                    <AddCircleOutlineIcon />
-                </IconButton>
-            </Tooltip>
+            <div style={{margin:10}}>
+                <Button  size='large' color='secondary' variant='outlined' onClick={createPoem}>
+
+                    <AddIcon />
+                    <span style={{paddingLeft:3, paddingTop:3}}>New draft</span>
+                </Button>
+            </div>
             <Tabs
                 value={selectedTab}
                 onChange={(e,val) => setSelectedTab(val)}
