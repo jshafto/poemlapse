@@ -192,6 +192,7 @@ const DraftEditor = () => {
         // they'd previously had and it overwrite the previously existing history??
         // but let's stick with this for now.
         if (storedChanges) {
+            console.log(storedChanges)
             const parsedChanges = JSON.parse(storedChanges);
             if (parsedChanges.length > changes.length) {
                 setChanges(parsedChanges)
