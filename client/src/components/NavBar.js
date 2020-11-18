@@ -118,7 +118,6 @@ const NavBar = () => {
                             <MenuIcon />
                         </IconButton>
                         <Menu
-                            disablePadding
                             anchorEl={anchorEl}
                             // keepMounted
                             open={Boolean(anchorEl)}
