@@ -51,9 +51,12 @@ export const getActiveDraft = (draftId) => async (dispatch) => {
         const draft = await res.json();
         dispatch(loadActiveDraft(draft))
     } else {
-        const error = await res.json();
-        console.log(error.msg)
-        dispatch(loadingError(error.msg))
+        if (res.status===404) {
+            const error = await res.json();
+            dispatch(loadingError(error.msg))
+        } else if (res.status===401) {
+            dispatch(loadingError('Draft not found'))
+        }
     }
 }
 

@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useParams, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 import { format } from 'date-fns';
 
 
 import { makeStyles } from '@material-ui/styles';
 import Paper from '@material-ui/core/Paper';
-import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import Slider from '@material-ui/core/Slider';
-import Tooltip from '@material-ui/core/Tooltip'
 import IconButton from '@material-ui/core/IconButton';
 import PlayArrowRoundedIcon from '@material-ui/icons/PlayArrowRounded';
 import PauseIcon from '@material-ui/icons/Pause';
@@ -22,7 +20,6 @@ import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
 
 import SliderLabel from './SliderLabel';
 import { reconstruct } from '../utils/editorUtils';
-import { getOneWork, clearActiveWork } from '../store/works';
 import { storeSaveWork, storeUnsaveWork } from '../store/works';
 
 const useStyles = makeStyles(theme => ({
