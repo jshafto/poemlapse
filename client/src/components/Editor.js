@@ -248,7 +248,7 @@ const Editor = () => {
                                 disabled={textSize >= textSizes.length - 1}>
                                 <AddIcon />
                             </IconButton>
-                        </span>∏
+                        </span>
                     </Tooltip>
                     <Tooltip title="Font...">
                         <span>
