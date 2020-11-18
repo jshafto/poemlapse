@@ -63,8 +63,6 @@ const ErrorPage = () => {
             <div className={classes.top}>{headers[rand]}</div>
             <div className={classes.subtitle}>{followup[rand]}</div>
             <IconButton
-                size='large'
-                // variant='outlined'
                 color='secondary'
                 component={NavLink}
                 to='/'>
