@@ -27,6 +27,8 @@ import {
     storeUnsaveWork,
     storeSaveWork
 } from '../store/works';
+import { clearErrors } from '../store/errors';
+import ErrorPage from './ErrorPage';
 
 const useStyles = makeStyles(theme => ({
     edit: {
@@ -85,14 +87,19 @@ const ViewPoem = () => {
     const authorId = useSelector(state => state.entities.works.activeWork.userId);
     const datePublished = useSelector(state => state.entities.works.activeWork.datePublished);
     const saved = useSelector(state => state.entities.works.activeWork.saved)
+    const error = useSelector(state => state.errors.load);
 
     const [playing, setPlaying] = useState(false);
     const [playingInterval, setPlayingInterval] = useState(null);
     const [replayVal, setReplayVal] = useState(0);
 
     useEffect(() => {
+        dispatch(clearErrors());
         dispatch(getOneWork(workId));
-        return () => dispatch(clearActiveWork())
+        return (() => {
+            dispatch(clearErrors());
+            dispatch(clearActiveWork())
+        })
     }, [workId, dispatch])
 
     useEffect(() => {
@@ -142,6 +149,13 @@ const ViewPoem = () => {
     const handleUnsavePoem = () => {
         dispatch(storeUnsaveWork(workId))
     }
+
+    if (error === 'Poem not found') {
+        return (
+            <ErrorPage/>
+        )
+    }
+
     return (
         <>
             <Container maxWidth="md">

@@ -1,4 +1,4 @@
-import { authError, clearErrors } from './errors';
+import { authError, postError, clearErrors } from './errors';
 import { loadActiveAuthor } from './authors';
 // constants
 export const SET_USER = 'poemlapse/authentication/SET_USER';
@@ -51,8 +51,7 @@ export const logout = () => async (dispatch, getState) => {
     if (response.ok) {
         dispatch(removeUser());
     } else {
-        // change to actual dispatch of error
-        console.log('error')
+        dispatch(postError());
     }
 }
 

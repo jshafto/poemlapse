@@ -140,7 +140,7 @@ const Editor = () => {
     const [playingInterval, setPlayingInterval] = useState(null);
     const [fontMenuAnchor, setFontMenuAnchor] = useState(null);
 
-    const loggedOut = useSelector(state=>!state.authentication.id)
+    const loggedOut = useSelector(state => !state.authentication.id)
     const fetchingDraftId = useSelector(state => state.entities.drafts.fetching);
 
 
@@ -214,45 +214,51 @@ const Editor = () => {
                 Editor
             </Typography>
             {(loggedOut) ? (
-            <Typography variant="body1" color="textSecondary" gutterBottom>
-                Try out the poemlapse editor, and replay your writing process.
-                For a more in-depth demo of our features, or to save new drafts,
-                you can log in as a demo user <Link color='secondary' onClick={demoLogin}>here</Link>.
-            </Typography>
-            ) : (
                 <Typography variant="body1" color="textSecondary" gutterBottom>
-                Try out the poemlapse editor, and replay your writing process.
-                If you would like to be able to save your work,
+                    Try out the poemlapse editor, and replay your writing process.
+                    For a more in-depth demo of our features, or to save new drafts,
+                you can log in as a demo user <Link color='secondary' onClick={demoLogin}>here</Link>.
+                </Typography>
+            ) : (
+                    <Typography variant="body1" color="textSecondary" gutterBottom>
+                        Try out the poemlapse editor, and replay your writing process.
+                        If you would like to be able to save your work,
                 you can <Link color='secondary' onClick={createPoem}>create a new draft</Link>.
-            </Typography>
-            )}
+                    </Typography>
+                )}
             <Paper className={classes.edit} variant="outlined" >
                 <div className={classes.editorButtons}>
                     <Tooltip title="Decrease Font Size">
-                        <IconButton
-                            className={classes.fontSizeIcons}
-                            size="small"
-                            onClick={() => setTextSize(textSize - 1)}
-                            disabled={textSize <= 0}>
-                            <RemoveIcon />
-                        </IconButton>
+                        <span>
+                            <IconButton
+                                className={classes.fontSizeIcons}
+                                size="small"
+                                onClick={() => setTextSize(textSize - 1)}
+                                disabled={textSize <= 0}>
+                                <RemoveIcon />
+                            </IconButton>
+                        </span>
                     </Tooltip>
                     <Tooltip title="Increase Font Size">
-                        <IconButton
-                            className={classes.fontSizeIcons}
-                            size="small"
-                            onClick={() => setTextSize(textSize + 1)}
-                            disabled={textSize >= textSizes.length - 1}>
-                            <AddIcon />
-                        </IconButton>
+                        <span>
+                            <IconButton
+                                className={classes.fontSizeIcons}
+                                size="small"
+                                onClick={() => setTextSize(textSize + 1)}
+                                disabled={textSize >= textSizes.length - 1}>
+                                <AddIcon />
+                            </IconButton>
+                        </span>∏
                     </Tooltip>
                     <Tooltip title="Font...">
-                        <IconButton
-                            className={classes.fontSizeIcons}
-                            size="small"
-                            onClick={(e) => setFontMenuAnchor(e.currentTarget)}>
-                            <TextFormatIcon />
-                        </IconButton>
+                        <span>
+                            <IconButton
+                                className={classes.fontSizeIcons}
+                                size="small"
+                                onClick={(e) => setFontMenuAnchor(e.currentTarget)}>
+                                <TextFormatIcon />
+                            </IconButton>
+                        </span>
                     </Tooltip>
                     <Menu
                         MenuListProps={{ className: classes.menu }}
