@@ -21,8 +21,9 @@ import EditIcon from '@material-ui/icons/Edit';
 import { getActiveAuthor, clearActiveAuthor } from '../store/authors';
 import { updateUserInfo } from '../store/authentication';
 import PublishedProfileWorks from './PublishedProfileWorks';
-
+import ErrorPage from './ErrorPage';
 import { sortWorks } from '../utils/workUtils';
+import { clearErrors } from '../store/errors';
 
 const Profile = () => {
     const { authorId } = useParams();
@@ -30,15 +31,15 @@ const Profile = () => {
 
     const userId = useSelector(state => state.authentication.id);
     const user = useSelector(state => state.authentication);
-
-
     const displayName = useSelector(state => state.entities.authors.activeAuthor.displayName);
     const username = useSelector(state => state.entities.authors.activeAuthor.username);
     const bio = useSelector(state => state.entities.authors.activeAuthor.bio);
     const works = useSelector(state => Object.values(state.entities.works.byId).sort(sortWorks));
     const saved = useSelector(state => Object.values(state.entities.saved.byId).sort(sortWorks));
-    const [selectedTab, setSelectedTab] = useState(0);
+    const error = useSelector(state => state.errors.load);
 
+
+    const [selectedTab, setSelectedTab] = useState(0);
     const [editingInfo, setEditingInfo] = useState(false);
     const [firstNameField, setFirstNameField] = useState('');
     const [lastNameField, setLastNameField] = useState('');
@@ -46,8 +47,12 @@ const Profile = () => {
 
 
     useEffect(() => {
+        dispatch(clearErrors());
         dispatch(getActiveAuthor(authorId));
-        return () => dispatch(clearActiveAuthor());
+        return () => {
+            dispatch(clearActiveAuthor());
+            dispatch(clearErrors());
+        }
     }, [authorId])
 
     const handleClickEdit = () => {
@@ -65,6 +70,12 @@ const Profile = () => {
         e.preventDefault();
         dispatch(updateUserInfo(firstNameField, lastNameField, bioField));
         setEditingInfo(false);
+    }
+
+    if (error === 'User not found') {
+        return (
+            <ErrorPage/>
+        )
     }
 
     return (
