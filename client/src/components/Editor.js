@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 
 import { format } from 'date-fns';
 
 import { makeStyles } from '@material-ui/styles';
 import Paper from '@material-ui/core/Paper';
 import Container from '@material-ui/core/Container';
-import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import Slider from '@material-ui/core/Slider';
 import EditIcon from '@material-ui/icons/Edit';
 import HistoryIcon from '@material-ui/icons/History';
@@ -22,9 +22,12 @@ import PauseIcon from '@material-ui/icons/Pause';
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
 import TextFormatIcon from '@material-ui/icons/TextFormat';
+import Link from '@material-ui/core/Link';
 
 import SliderLabel from './SliderLabel';
 import { compareStrings, reconstruct } from '../utils/editorUtils';
+import { login } from '../store/authentication';
+import { newDraft } from '../store/drafts';
 
 const useStyles = makeStyles(theme => ({
     title: {
@@ -125,9 +128,9 @@ const textSizes = [".6rem", ".8rem", "1rem", "1.2rem", "1.4rem"];
 
 const Editor = () => {
     const classes = useStyles();
-    // const [title, setTitle] = useState("poem")
+    const dispatch = useDispatch();
+    const history = useHistory();
     const [changes, setChanges] = useState([]);
-    // const [editingTitle, setEditingTitle] = useState(false);
     const [poemField, setPoemField] = useState("");
     const [textSize, setTextSize] = useState(2);
     const [replayVal, setReplayVal] = useState(changes.length);
@@ -137,11 +140,13 @@ const Editor = () => {
     const [playingInterval, setPlayingInterval] = useState(null);
     const [fontMenuAnchor, setFontMenuAnchor] = useState(null);
 
+    const loggedOut = useSelector(state => !state.authentication.id)
+    const fetchingDraftId = useSelector(state => state.entities.drafts.fetching);
+
 
     const handleClickPlay = () => {
         clearInterval(playingInterval)
         setPlaying(true);
-        // let first = true;
         if (replayVal >= changes.length) {
             setReplayVal(0)
         }
@@ -188,61 +193,72 @@ const Editor = () => {
         return (changes[x]) ? format(new Date(changes[x].t), 'p \n MM/dd') : '';
     }
 
+    const demoLogin = () => {
+        dispatch(login('demo@poems.poem', 'apoetrydemohownice'));
+        history.push('/');
+    }
+
+    const createPoem = () => {
+        dispatch(newDraft('untitled'))
+    }
+
+    useEffect(() => {
+        if (fetchingDraftId) {
+            history.push(`/drafts/${fetchingDraftId}`)
+        }
+    }, [fetchingDraftId])
 
     return (
         <Container maxWidth="md">
             <Typography variant="h5" gutterBottom>
                 Editor
             </Typography>
-            <Typography variant="body1" color="textSecondary" gutterBottom>
-                Try out the poemlapse editor, and replay your writing process.
-                For a more in-depth demo of our features, or to save what you are working on,
-                you can log in as a demo user here.
-            </Typography>
-            {/* {(editingTitle) ? (
-                <ClickAwayListener onClickAway={() => setEditingTitle(false)}>
-                    <TextField
-                        className={classes.title}
-                        value={title}
-                        onChange={e => setTitle(e.target.value)}
-                        onBlur={() => setEditingTitle(false)}
-                    />
-                </ClickAwayListener>
+            {(loggedOut) ? (
+                <Typography variant="body1" color="textSecondary" gutterBottom>
+                    Try out the poemlapse editor, and replay your writing process.
+                    For a more in-depth demo of our features, or to save new drafts,
+                you can log in as a demo user <Link color='secondary' onClick={demoLogin}>here</Link>.
+                </Typography>
             ) : (
-                    <Typography
-                        className={classes.title}
-                        variant="h6"
-                        onClick={() => setEditingTitle(true)}>
-                        {title}
+                    <Typography variant="body1" color="textSecondary" gutterBottom>
+                        Try out the poemlapse editor, and replay your writing process.
+                        If you would like to be able to save your work,
+                you can <Link color='secondary' onClick={createPoem}>create a new draft</Link>.
                     </Typography>
-                )} */}
+                )}
             <Paper className={classes.edit} variant="outlined" >
                 <div className={classes.editorButtons}>
                     <Tooltip title="Decrease Font Size">
-                        <IconButton
-                            className={classes.fontSizeIcons}
-                            size="small"
-                            onClick={() => setTextSize(textSize - 1)}
-                            disabled={textSize <= 0}>
-                            <RemoveIcon />
-                        </IconButton>
+                        <span>
+                            <IconButton
+                                className={classes.fontSizeIcons}
+                                size="small"
+                                onClick={() => setTextSize(textSize - 1)}
+                                disabled={textSize <= 0}>
+                                <RemoveIcon />
+                            </IconButton>
+                        </span>
                     </Tooltip>
                     <Tooltip title="Increase Font Size">
-                        <IconButton
-                            className={classes.fontSizeIcons}
-                            size="small"
-                            onClick={() => setTextSize(textSize + 1)}
-                            disabled={textSize >= textSizes.length - 1}>
-                            <AddIcon />
-                        </IconButton>
+                        <span>
+                            <IconButton
+                                className={classes.fontSizeIcons}
+                                size="small"
+                                onClick={() => setTextSize(textSize + 1)}
+                                disabled={textSize >= textSizes.length - 1}>
+                                <AddIcon />
+                            </IconButton>
+                        </span>∏
                     </Tooltip>
                     <Tooltip title="Font...">
-                        <IconButton
-                            className={classes.fontSizeIcons}
-                            size="small"
-                            onClick={(e) => setFontMenuAnchor(e.currentTarget)}>
-                            <TextFormatIcon />
-                        </IconButton>
+                        <span>
+                            <IconButton
+                                className={classes.fontSizeIcons}
+                                size="small"
+                                onClick={(e) => setFontMenuAnchor(e.currentTarget)}>
+                                <TextFormatIcon />
+                            </IconButton>
+                        </span>
                     </Tooltip>
                     <Menu
                         MenuListProps={{ className: classes.menu }}

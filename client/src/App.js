@@ -18,6 +18,7 @@ import Footer from './components/Footer';
 import { restoreCSRF } from './store/csrf';
 import { themeObj } from './theme'
 import { AuthRoute } from './Routes';
+import ErrorPage from './components/ErrorPage';
 
 const useStyles = makeStyles((theme) => ({
     site: {
@@ -64,6 +65,9 @@ function App() {
                         </Route>
                         <Route exact path="/">
                             <LandingOrDashboard />
+                        </Route>
+                        <Route path="/">
+                            <ErrorPage />
                         </Route>
                     </Switch>
                 </div>

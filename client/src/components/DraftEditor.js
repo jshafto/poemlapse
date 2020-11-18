@@ -27,10 +27,12 @@ import TextFormatIcon from '@material-ui/icons/TextFormat';
 import PublishIcon from '@material-ui/icons/Publish';
 
 import SliderLabel from './SliderLabel';
+import ErrorPage from './ErrorPage';
 import { compareStrings, reconstruct } from '../utils/editorUtils';
 import { getActiveDraft, clearActiveDraft, updateDraft } from '../store/drafts';
-import { publishWork } from '../store/works'
+import { publishWork } from '../store/works';
 import { setAutosaved, setNotSaved } from '../store/ui';
+import { clearErrors } from '../store/errors';
 
 const useStyles = makeStyles(theme => ({
     title: {
@@ -139,9 +141,9 @@ const DraftEditor = () => {
     const userId = useSelector(state => state.authentication.id);
     const storedTitle = useSelector(state => state.entities.drafts.activeDraft.title);
     const storedChanges = useSelector(state => state.entities.drafts.activeDraft.changes);
-    const dateCreated = useSelector(state => state.entities.drafts.activeDraft.date_created);
     const fetchingPublishId = useSelector(state => state.entities.works.fetching);
     const autosaved = useSelector(state => state.ui.autosaved)
+    const error = useSelector(state => state.errors.load);
 
     const [titleField, setTitleField] = useState(storedTitle || "")
     const [changes, setChanges] = useState([{inserted:"", front:0, end:0, t:(new Date())}]);
@@ -165,8 +167,12 @@ const DraftEditor = () => {
 
 
     useEffect(() => {
+        dispatch(clearErrors());
         dispatch(getActiveDraft(draftId));
-        return () => dispatch(clearActiveDraft())
+        return (() => {
+            dispatch(clearErrors());
+            dispatch(clearActiveDraft())
+        })
     }, [draftId, dispatch, userId])
 
     useEffect(() => {
@@ -269,6 +275,8 @@ const DraftEditor = () => {
         dispatch(publishWork(draftId))
     }
 
+
+
     useEffect(() => {
         return () => {
             if (saveTimeout) {
@@ -278,6 +286,13 @@ const DraftEditor = () => {
             }
         }
     }, [])
+
+    if (error === 'Draft not found') {
+        return (
+            <ErrorPage/>
+        )
+    }
+
     return (
         <Container maxWidth="md">
             <div style={{
@@ -292,7 +307,7 @@ const DraftEditor = () => {
                             className={classes.title}
                             value={titleField}
                             onChange={e => setTitleField(e.target.value)}
-                            onBlur={() => setEditingTitle(false)}
+                            onBlur={submitNewTitle}
                         />
                     </form>
                 </ClickAwayListener>
@@ -313,6 +328,7 @@ const DraftEditor = () => {
             <Paper className={classes.edit} variant="outlined" >
                 <div className={classes.editorButtons}>
                     <Tooltip title="Publish">
+                        <span>
                         <IconButton
                             className={classes.fontSizeIcons}
                             size="small"
@@ -320,8 +336,10 @@ const DraftEditor = () => {
                             disabled={changes.length<=1}>
                             <PublishIcon />
                         </IconButton>
+                        </span>
                     </Tooltip>
                     <Tooltip title="Decrease Font Size">
+                        <span>
                         <IconButton
                             className={classes.fontSizeIcons}
                             size="small"
@@ -329,8 +347,10 @@ const DraftEditor = () => {
                             disabled={textSize <= 0}>
                             <RemoveIcon />
                         </IconButton>
+                        </span>
                     </Tooltip>
                     <Tooltip title="Increase Font Size">
+                        <span>
                         <IconButton
                             className={classes.fontSizeIcons}
                             size="small"
@@ -338,6 +358,7 @@ const DraftEditor = () => {
                             disabled={textSize >= textSizes.length - 1}>
                             <AddIcon />
                         </IconButton>
+                        </span>
                     </Tooltip>
                     <Tooltip title="Font...">
                         <IconButton

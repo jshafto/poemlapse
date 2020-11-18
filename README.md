@@ -5,7 +5,7 @@ Poemlapse is a clone of the software behind [Midst](http://midst.press/), a poet
 Using Poemlapse, you can write poems and replay your process in the editor. Work on drafts, and publish them for others to view. Browse recent works and save your favorites.
 
 ## Technologies
-
+React / Redux
 
 ## Features
 ### Editor
