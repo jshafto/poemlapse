@@ -9,7 +9,7 @@ import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import Link from "@material-ui/core/Link";
 
-import { login } from '../store/authentication';
+import { loadingUser, login } from '../store/authentication';
 import { clearErrors } from '../store/errors';
 
 const useStyles = makeStyles((theme) => ({
@@ -44,11 +44,13 @@ const LoginForm = () => {
 
     const submitForm = (e) => {
         e.preventDefault();
-        dispatch(login(email, password))
+        dispatch(login(email, password));
+        dispatch(loadingUser());
     }
 
     const demoLogin = () => {
         dispatch(login('demo@poems.poem', 'apoetrydemohownice'));
+        dispatch(loadingUser());
         history.push('/');
     }
     return (
