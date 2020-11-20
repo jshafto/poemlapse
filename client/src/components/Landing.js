@@ -82,6 +82,9 @@ const Landing = () => {
                 return ind + 1;
             })
         }, 150)
+        return () => {
+            clearInterval(interval);
+        }
     }, [])
 
 

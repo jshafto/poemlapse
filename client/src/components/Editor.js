@@ -26,7 +26,7 @@ import Link from '@material-ui/core/Link';
 
 import SliderLabel from './SliderLabel';
 import { compareStrings, reconstruct } from '../utils/editorUtils';
-import { login } from '../store/authentication';
+import { loadingUser, login } from '../store/authentication';
 import { newDraft } from '../store/drafts';
 
 const useStyles = makeStyles(theme => ({
@@ -195,6 +195,7 @@ const Editor = () => {
 
     const demoLogin = () => {
         dispatch(login('demo@poems.poem', 'apoetrydemohownice'));
+        dispatch(loadingUser());
         history.push('/');
     }
 
