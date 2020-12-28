@@ -3,6 +3,7 @@ import { loadActiveAuthor } from './authors';
 // constants
 export const SET_USER = 'poemlapse/authentication/SET_USER';
 export const REMOVE_USER = 'poemlapse/authentication/REMOVE_USER';
+export const LOADING_USER = 'poemlapse/authentication/LOADING_USER';
 // action creators
 export const setUser = (user) => ({
     type: SET_USER,
@@ -11,6 +12,10 @@ export const setUser = (user) => ({
 
 export const removeUser = () => ({
     type: REMOVE_USER
+})
+
+export const loadingUser = () => ({
+    type: LOADING_USER
 })
 
 // thunks
@@ -33,6 +38,7 @@ export const login = (email, password) => async (dispatch, getState) => {
         dispatch(setUser(data.current_user));
     } else {
         const data = await response.json();
+        dispatch(removeUser());
         dispatch(authError(data.msg))
     }
 };
@@ -73,6 +79,7 @@ export const signup = (username, email, password) => async (dispatch, getState) 
         dispatch(setUser(data.current_user));
     } else {
         const data = await response.json();
+        dispatch(removeUser());
         dispatch(authError(data.msg))
     }
 }
@@ -108,6 +115,8 @@ export default function reducer(state = {}, action) {
             return action.user;
         case REMOVE_USER:
             return {};
+        case LOADING_USER:
+            return { loading: true }
         default:
             return state;
 

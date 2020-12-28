@@ -1,4 +1,4 @@
-import { setUser } from './authentication'
+import { removeUser, setUser } from './authentication'
 // constants
 export const SET_CSRF_TOKEN = 'poemlapse/csrf/SET_CSRF_TOKEN';
 
@@ -25,6 +25,8 @@ export const restoreCSRF = () => async (dispatch) => {
         if (authData.current_user) {
             //   Change to set current user dispatch call
             dispatch(setUser(authData.current_user));
+        } else {
+            dispatch(removeUser());
         }
     }
 };
