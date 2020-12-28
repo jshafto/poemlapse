@@ -19,7 +19,7 @@ Custom text editor allows users to easily switch between composing their poem an
 ![editor](documentation/images/editor.png)
 ### Publish drafts
 When a poem is ready, it can be published, so that others can see the finished poem and its complete history. If a user changes their mind, they can return a published work to their drafts to continue making changes.
-![published work](documentation/images/[published].png)
+![published work](documentation/images/published.png)
 ### Browse poems
 Users and guests can browse all of the works that have been published, and replay the chronological history of any poem as they scroll through.
 ![poem broswer](documentation/images/browse.png)
