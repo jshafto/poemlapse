@@ -19,6 +19,7 @@ import { restoreCSRF } from './store/csrf';
 import { themeObj } from './theme'
 import { AuthRoute } from './Routes';
 import ErrorPage from './components/ErrorPage';
+import { loadingUser } from './store/authentication';
 
 const useStyles = makeStyles((theme) => ({
     site: {
@@ -35,6 +36,7 @@ function App() {
 
     useEffect(() => {
         dispatch(restoreCSRF());
+        dispatch(loadingUser());
     }, []);
 
 
