@@ -6,13 +6,13 @@ import Link from '@material-ui/core/Link';
 
 const Links = () => (
     <Typography variant='body2' color='textSecondary' align='center'>
-      <Link target='_blank' color='inherit' href='https://github.com/jshafto/poemlapse'>
+      <Link target='_blank' rel="noreferrer" color='inherit' href='https://github.com/jshafto/poemlapse'>
         Github
       </Link>{' | '}
-      <Link target='_blank' color='inherit' href='https://github.com/jshafto/'>
+      <Link target='_blank' rel="noreferrer" color='inherit' href='https://julietshafto.com'>
         Portfolio
       </Link>{' | '}
-      <Link target='_blank' color='inherit' href='https://midst.press'>
+      <Link target='_blank' rel="noreferrer" color='inherit' href='https://midst.press'>
         Inspired by Midst
       </Link>
 
