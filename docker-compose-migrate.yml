@@ -1,6 +1,7 @@
 version: '3.8'
 
 services:
+
   db:
     env_file:
       - ./.env.prod.db
@@ -26,6 +27,30 @@ services:
       - default
     ports:
       - 8000:8000
+      
+  migrate:
+    build: 
+      context: .
+      dockerfile: Dockerfile-prod
+    env_file:
+      - ./.env.prod
+    depends_on:
+      - db
+    networks:
+      - default
+    command: flask db upgrade
+  
+  seed:
+    build: 
+      context: .
+      dockerfile: Dockerfile-prod
+    env_file:
+      - ./.env.prod
+    depends_on:
+      - migrate
+    networks:
+      - default
+    command: python -m database
 
 volumes:
   postgres-data:

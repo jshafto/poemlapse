@@ -17,7 +17,6 @@ ENV FLASK_APP=app
 ENV FLASK_ENV=production
 ENV SQLALCHEMY_ECHO=True
 ENV PORT=8000
-# ENV DATABASE_URL=postgresql://poemlapse_app_prod:somethingmoresecurethanpassword@db:5432/poemlapse_prod
 
 EXPOSE 8000
 
