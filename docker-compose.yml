@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+
+  db:
+    env_file:
+      - ./.env.prod.db
+    image: postgres:latest
+    networks:
+      - default
+    ports:
+      - 5432:5432
+    expose: 
+      - 5432
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  api:
+    build: 
+      context: .
+      dockerfile: Dockerfile-prod
+    env_file:
+      - ./.env.prod
+    depends_on:
+      - db
+    networks:
+      - default
+    ports:
+      - 8000:8000
+      
+  migrate:
+    build: 
+      context: .
+      dockerfile: Dockerfile-prod
+    env_file:
+      - ./.env.prod
+    depends_on:
+      - db
+    networks:
+      - default
+    command: flask db upgrade
+  
+  seed:
+    build: 
+      context: .
+      dockerfile: Dockerfile-prod
+    env_file:
+      - ./.env.prod
+    depends_on:
+      - db
+    networks:
+      - default
+    command: python -m database
+
+volumes:
+  postgres-data:
