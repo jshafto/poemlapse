@@ -1,4 +1,6 @@
 .env
+.env.prod
+.env.prod.db
 __pycache__/
 *.py[cod]
 .DS_Store
